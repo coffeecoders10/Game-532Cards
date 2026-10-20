@@ -17,6 +17,10 @@ interface Props {
   isWinner?: boolean;
   /** Back design for the opponent's fanned cards. */
   back?: "lattice" | "rosette";
+  /** Skip the fan of cards, for tables with several opponents. */
+  compact?: boolean;
+  /** Line under the name when there is no target tally. */
+  sub?: string;
 }
 
 function Tally({ target, wins }: { target: number; wins: number }) {
@@ -51,6 +55,8 @@ export function Seat({
   isTurn,
   isWinner,
   back,
+  compact,
+  sub,
 }: Props) {
   const empty = name === null;
   return (
@@ -75,7 +81,9 @@ export function Seat({
           {target !== undefined ? (
             <Tally target={target} wins={wins} />
           ) : (
-            <span className={styles.sub}>{empty ? "Share the code to invite" : connected ? "Ready" : "Reconnecting…"}</span>
+            <span className={styles.sub}>
+              {empty ? "Share the code to invite" : !connected ? "Reconnecting…" : (sub ?? "Ready")}
+            </span>
           )}
         </div>
         {isWinner && wins > 0 && (
@@ -85,7 +93,7 @@ export function Seat({
         )}
       </div>
 
-      {position !== "me" && handCount > 0 && (
+      {position !== "me" && !compact && handCount > 0 && (
         <div className={styles.fan} aria-label={`${handCount} cards`} data-origin="fan">
           {Array.from({ length: handCount }, (_, i) => (
             <PlayingCard

@@ -1,6 +1,6 @@
 # CC Card Games
 
-A hub of playing-card games for the browser. Currently: **5-3-2**, a three-player trick-taking game, and **7-8**, a two-player one. The shared look and feel, and how to add a game, are in [DESIGN.md](DESIGN.md).
+A hub of playing-card games for the browser. Currently: **5-3-2**, a three-player trick-taking game, **7-8**, a two-player one, and **7 of Hearts**, for three to five. The shared look and feel, and how to add a game, are in [DESIGN.md](DESIGN.md).
 
 Built with Next.js (App Router), plain CSS Modules, and the shared Socket.IO room service described in [docs/sop-socket.md](docs/sop-socket.md).
 
@@ -29,6 +29,15 @@ Same 30-card deck, two players. The **8** wants 8 of the 15 hands, the **7** wan
 3. Win more than your number and you earn a swap per extra hand: next deal you take either a chosen face-up card or a random hand card from the other player, and give one of yours back.
 4. Deals continue until players leave.
 
+## How 7 of Hearts plays
+
+Full 52-card deck dealt out evenly to 3–5 players, over seven rounds.
+
+1. The holder of the **7 of Hearts** opens the round by playing it; play goes clockwise.
+2. Play a 7 to open a suit, or extend an open suit one step down or up (Ace low, King high, no wrap). If nothing fits you pass; if something fits you must play.
+3. First to empty their hand goes out. Everyone else scores the value of their remaining cards (Ace 1 to King 13).
+4. Lowest total after round seven wins. The host can deal once three players are seated; the table then locks to those players.
+
 ## Code layout
 
 | Path | What it is |
@@ -37,7 +46,7 @@ Same 30-card deck, two players. The **8** wants 8 of the 15 hands, the **7** wan
 | `games/registry.tsx` | The list of games shown on the hub. Add an entry to add a tile. |
 | `games/532/game/` | Pure 5-3-2 rules (`engine.ts`), deck (`deck.ts`), and the per-player view projection (`view.ts`). No React, no networking. |
 | `games/532/net/`, `games/78/net/` | Each game's actions (`protocol.ts`) and its adapter (`table.ts`) that plugs its rules into the shared sessions. |
-| `games/78/` | 7-8: same layout as 5-3-2 (`game/` rules and view, `net/`, `components/`). |
+| `games/78/`, `games/7hearts/` | 7-8 and 7 of Hearts: same layout as 5-3-2 (`game/` rules and view, `net/`, `components/`). |
 | `lib/net/` | Shared multiplayer: `host.ts` and `guest.ts` sessions, `crypto.ts`, `room.ts` (Socket.IO transport), `wire.ts`, `storage.ts` and the `useTable` hook. |
 | `components/table/` | Shared table pieces: `TableShell`, `Seat`, `Lobby`, `TrumpPicker`, `GameHome`, `RoomClient`, `NameGate`. |
 | `games/532/components/` | The 5-3-2 table UI: `Table`, `Hand`, `Seat`, `TrickArea`, `Overlays`, `Lobby`, the landing page and rules. |

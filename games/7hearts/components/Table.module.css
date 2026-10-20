@@ -1,0 +1,151 @@
+/* ---------------------------------------------------------------- board */
+
+/* Top to bottom: the other players, the four suit runs, your plate. */
+.board {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+  margin: 0 8px;
+}
+
+/* Opponents wrap onto a second line on phones when four of them are seated. */
+.opponents {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 10px;
+  min-height: 4px;
+}
+
+.center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 0;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.line {
+  position: relative;
+  z-index: 2;
+  min-height: 28px;
+  padding: 3px 16px;
+  border-radius: 999px;
+  font-size: 14.5px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-dim);
+  transition:
+    color 0.3s,
+    background 0.3s;
+}
+
+.line[data-active="true"] {
+  color: #2b1d0a;
+  background: var(--lamp);
+  animation: nudge 0.6s var(--ease-spring);
+}
+
+@keyframes nudge {
+  from {
+    scale: 0.85;
+  }
+}
+
+.last {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  opacity: 0.85;
+}
+
+.pass {
+  min-height: 44px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 4px 0 var(--paper-edge), 0 10px 18px rgba(0, 0, 0, 0.35);
+  transition:
+    translate 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out),
+    opacity 0.2s;
+}
+
+.pass:hover:not(:disabled) {
+  translate: 0 -2px;
+}
+
+.pass:active:not(:disabled) {
+  translate: 0 3px;
+  box-shadow: 0 1px 0 var(--paper-edge), 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.pass:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.me {
+  display: flex;
+  justify-content: center;
+}
+
+/* The round summary sits over the whole board. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  padding: 8px 0;
+}
+
+.overlay[data-dim] {
+  background: rgba(6, 22, 21, 0.62);
+  border-radius: 16px;
+  animation: dimIn 0.4s var(--ease-out) backwards;
+}
+
+@keyframes dimIn {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ----------------------------------------------------------------- mine */
+
+.mine {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+}
+
+.emptyHand {
+  min-height: 24px;
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  .board {
+    gap: 2px;
+  }
+}

@@ -21,9 +21,15 @@ import { type CommonAction, type ToGuest, type Wire, parseToHost } from "./wire"
 export interface HostEngine<G, GV, A extends { type: string }> {
   /** Seats at the table; seat 0 is the host. */
   seats: number;
-  /** Shown when the host tries to deal before every seat is filled. */
+  /**
+   * Fewest players that can start. Omit when every seat must be filled. Otherwise the host may
+   * deal once this many are seated, and empty seats are dropped for the rest of the game.
+   */
+  minSeats?: number;
+  /** Shown when the host tries to deal before enough seats are filled. */
   startError: string;
-  newGame(randomInt: RandomInt): G;
+  /** `players` is the number of seats actually filled at the start. */
+  newGame(randomInt: RandomInt, players: number): G;
   act(game: G, seat: number, action: A, randomInt: RandomInt): G;
   /** What `seat` is allowed to see of the game. */
   view(game: G, seat: number): GV;
@@ -75,7 +81,7 @@ const emptySeat = (): SeatRecord => ({ id: null, name: null, pk: null, key: null
  * sealed so that nobody else in the shared room can read it.
  */
 export class HostSession<G, GV, A extends { type: string }> {
-  private readonly seats: SeatRecord[];
+  private seats: SeatRecord[];
   private game: G | null = null;
   private v = 0;
   private present = new Set<string>();
@@ -138,6 +144,8 @@ export class HostSession<G, GV, A extends { type: string }> {
     if (!saved || saved.seats?.[0]?.id !== this.opts.identity.id) return;
     this.v = saved.v;
     this.game = saved.game;
+    // A game dealt with fewer than the maximum seats was saved without the empty ones.
+    if (saved.game) this.seats = this.seats.slice(0, saved.seats.length);
     saved.seats.forEach((s, i) => {
       if (i > 0) this.seats[i] = { id: s.id, name: s.name, pk: s.pk, key: null };
     });
@@ -320,8 +328,13 @@ export class HostSession<G, GV, A extends { type: string }> {
     if (isCommon(action) && action.type === "start") {
       if (seat !== 0) throw new RuleError("Only the host can start the game.");
       if (this.game) throw new RuleError("The game has already started.");
-      if (!this.seats.every((_, i) => this.isConnected(i))) throw new RuleError(engine.startError);
-      this.game = engine.newGame(this.randomInt);
+      const seated = this.seats.filter((s) => s.id !== null).length;
+      const needed = engine.minSeats ?? this.seats.length;
+      if (seated < needed || !this.seats.every((s, i) => s.id === null || this.isConnected(i))) {
+        throw new RuleError(engine.startError);
+      }
+      this.seats = this.seats.filter((s) => s.id !== null);
+      this.game = engine.newGame(this.randomInt, this.seats.length);
       this.publish();
       return;
     }

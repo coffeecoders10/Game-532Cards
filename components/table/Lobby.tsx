@@ -13,16 +13,19 @@ interface Props {
   title: string;
   isHost: boolean;
   disabled: boolean;
+  /** Fewest players that can start; defaults to every seat. */
+  minPlayers?: number;
   onStart(): void;
 }
 
 /** Waiting room shown on the felt until every seat is filled. */
-export function Lobby({ view, slug, title, isHost, disabled, onStart }: Props) {
+export function Lobby({ view, slug, title, isHost, disabled, minPlayers, onStart }: Props) {
   const [copied, setCopied] = useState(false);
   const link = useClientValue(() => `${location.origin}/games/${slug}/room/${view.code}`, "");
   const canShare = useClientValue(() => typeof navigator.share === "function", false);
   const total = view.seats.length;
   const seated = view.seats.filter((s) => s.name !== null && s.connected).length;
+  const needed = minPlayers ?? total;
 
   const copy = async () => {
     try {
@@ -56,15 +59,17 @@ export function Lobby({ view, slug, title, isHost, disabled, onStart }: Props) {
       </div>
 
       <p className={panel.hint} role="status">
-        {seated < total
-          ? `${seated} of ${total} players seated. Send the code to ${total - seated === 1 ? "one more friend" : "two friends"}.`
-          : isHost
-            ? "Everyone's here."
-            : "Everyone's here. Waiting for the host to deal."}
+        {seated < needed
+          ? `${seated} of ${total} players seated. Send the code to ${needed - seated === 1 ? "one more friend" : "more friends"}.`
+          : minPlayers !== undefined && seated < total
+            ? `${seated} of ${total} seats filled. Deal now, or wait for more friends.`
+            : isHost
+              ? "Everyone's here."
+              : "Everyone's here. Waiting for the host to deal."}
       </p>
 
       {isHost && (
-        <button type="button" className={`${panel.primary} ${styles.start}`} disabled={disabled || seated < total} onClick={onStart}>
+        <button type="button" className={`${panel.primary} ${styles.start}`} disabled={disabled || seated < needed} onClick={onStart}>
           Deal the cards
         </button>
       )}

@@ -1,0 +1,106 @@
+/* Four columns, one per suit. Low cards stack above the 7, high cards below, each peeking out from the last. */
+.layout {
+  --cw: clamp(28px, min(15vw, 4.4dvh), 56px);
+  --peek: calc(var(--cw) * 0.46);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(8px, 3vw, 28px);
+  width: 100%;
+  min-height: 0;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: var(--cw);
+}
+
+.tag {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+}
+
+.tag svg {
+  width: 14px;
+  height: 14px;
+  color: var(--paper);
+}
+
+.col[data-red="true"] .tag svg {
+  color: #f08a7e;
+}
+
+.run {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  margin-top: calc(var(--peek) - var(--cw) * 1.4);
+  animation: land 0.45s var(--ease-spring) backwards;
+}
+
+.run > :first-child {
+  margin-top: 0;
+}
+
+/* A dashed outline at each open end of a run: the card that suit is waiting for. */
+.next {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: var(--cw);
+  height: calc(var(--cw) * 0.8);
+  border: 1.5px dashed rgba(220, 176, 100, 0.4);
+  border-radius: calc(var(--cw) * 0.1);
+  color: var(--text-dim);
+  font-size: calc(var(--cw) * 0.36);
+  line-height: 1;
+  opacity: 0.75;
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    opacity 0.25s;
+}
+
+.next b {
+  font-family: var(--font-head);
+  font-weight: 400;
+}
+
+.next svg {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+/* A little air between a run and the card it is waiting for, instead of the usual overlap. */
+.card + .next,
+.next + .card {
+  margin-top: 4px;
+}
+
+.next[data-hot="true"] {
+  border: 1.5px solid var(--lamp);
+  background: rgba(255, 220, 148, 0.14);
+  color: var(--lamp);
+  opacity: 1;
+}
+
+@keyframes land {
+  from {
+    translate: 0 -30px;
+    scale: 1.25;
+    opacity: 0;
+  }
+}

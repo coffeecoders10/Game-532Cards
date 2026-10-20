@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Emblem532 } from "./532/components/Emblem532";
 import { Emblem78 } from "./78/components/Emblem78";
+import { Emblem7Hearts } from "./7hearts/components/Emblem7Hearts";
 
 export interface GameInfo {
   /** Route segment: the game lives at `/games/<slug>`. */
@@ -32,6 +33,13 @@ export const GAMES: GameInfo[] = [
     tagline: "Win your number, and take the rest from the other side.",
     facts: ["2 players", "Online"],
     emblem: <Emblem78 size="clamp(52px, 14vw, 68px)" />,
+  },
+  {
+    slug: "7hearts",
+    title: "7 of Hearts",
+    tagline: "Build every suit out from the seven, and be first to empty your hand.",
+    facts: ["3–5 players", "Online"],
+    emblem: <Emblem7Hearts size="clamp(52px, 14vw, 68px)" />,
   },
 ];
 

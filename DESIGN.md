@@ -180,6 +180,7 @@ Shared, game-agnostic building blocks. Use these before writing new CSS.
 | `Hub`, `GameTile` | `components/hub/` | Landing page and per-game tiles |
 | `TableShell`, `TrumpChip` | `components/table/` | Felt, rail, header (wordmark, state, Rules, Leave) and alerts for any table |
 | `Seat`, `Lobby`, `TrumpPicker` | `components/table/` | Nameplate (positions left, right, top, me), waiting room, trump chooser |
+| Variable player counts | `lib/net/host.ts`, `Lobby` | An engine may set `minSeats`; the host can then deal once that many are seated and drops empty seats (`newGame` receives the player count). `Lobby` takes `minPlayers` |
 | `GameHome`, `RoomClient`, `NameGate` | `components/table/` | Shared landing page and room route for multiplayer games |
 
 Shared logic lives in `lib/`: `lib/cards/cards.ts` (suits, ranks, names, shuffle, sort) and `lib/hooks/useClientValue.ts` (hydration-safe browser values).
@@ -218,7 +219,7 @@ Things the first game hasn't needed. Decide and record them here when a game doe
 
 - Spectator and rejoin states in the lobby
 - Scoreboards and end-of-game summaries as a shared component
-- Games for 4+ players (2-player layout is 7-8: opponent across the table, their cards above, yours below)
+- Games for 4+ players: 7 of Hearts (3–5) shows opponents as compact nameplates (`Seat compact`, card and point counts in `sub`) in a row above the board, in clockwise order, with your own plate and hand below. Its hand is never overlapped: every card stays fully visible and the hand wraps onto extra rows. Suit runs stand as vertical columns. A shared seat-around-the-table layout is still undecided
 - Single-player or bot opponents
 - Sound and haptics
 - Light theme (the product is deliberately dark-felt only for now)

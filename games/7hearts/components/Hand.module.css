@@ -1,0 +1,53 @@
+/* Nothing overlaps: up to 18 cards wrap onto as many rows as they need. */
+.hand {
+  --cw: clamp(32px, min(9.4vw, 6.4dvh), 72px);
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 3px;
+  max-width: 760px;
+  padding: 16px 10px 4px;
+}
+
+.card {
+  animation: deal 0.6s var(--ease-out) calc(var(--k) * 28ms) backwards;
+}
+
+.hand .card:not(.can) {
+  cursor: default;
+}
+
+/* Playable cards rise a little and wear a lamp ring, so the choice reads at a glance. */
+.hand button.can,
+.hand button.can:hover {
+  translate: 0 -8px;
+  box-shadow:
+    0 0 0 calc(var(--u) * 2) rgba(255, 220, 148, 0.85),
+    0 0 calc(var(--u) * 6) calc(var(--u) * 1) rgba(255, 220, 148, 0.3),
+    0 calc(var(--u) * 2) calc(var(--u) * 4) rgba(0, 0, 0, 0.4);
+}
+
+@media (hover: hover) {
+  .hand .can:hover {
+    translate: 0 -14px;
+  }
+}
+
+.hand button.card.lift,
+.hand button.card.lift:hover {
+  box-shadow:
+    0 0 0 calc(var(--u) * 3.2) var(--lamp),
+    0 0 calc(var(--u) * 9) calc(var(--u) * 3) rgba(255, 220, 148, 0.6),
+    0 calc(var(--u) * 3) calc(var(--u) * 5) rgba(0, 0, 0, 0.45);
+  translate: 0 -16px;
+}
+
+@keyframes deal {
+  from {
+    translate: 0 -60dvh;
+    rotate: -30deg;
+    scale: 0.6;
+    opacity: 0;
+  }
+}
