@@ -14,8 +14,8 @@ const ui = Figtree({
 });
 
 export const metadata: Metadata = {
-  title: "5-3-2",
-  description: "A three-player trick-taking card game. Win your hands, trade cards, rotate the table.",
+  title: { default: "CC Card Games", template: "%s · CC Card Games" },
+  description: "Playing-card games to play online with friends. Pick a game, share a code, deal.",
 };
 
 export const viewport: Viewport = {

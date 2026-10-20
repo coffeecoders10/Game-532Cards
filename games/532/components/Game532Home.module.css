@@ -1,0 +1,9 @@
+.open {
+  margin-top: 4px;
+}
+
+.join {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}

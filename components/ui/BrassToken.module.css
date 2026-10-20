@@ -1,0 +1,16 @@
+.token {
+  display: grid;
+  place-items: center;
+  width: var(--token, 96px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #f8e2ab, var(--brass) 52%, #a37b36);
+  border: calc(var(--token, 96px) * 0.05) solid #5a4220;
+  color: #2b1d0a;
+  font-family: var(--font-head);
+  font-size: calc(var(--token, 96px) * 0.6);
+  line-height: 1;
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.45),
+    inset 0 -6px 12px rgba(90, 66, 32, 0.35);
+}

@@ -1,0 +1,38 @@
+.label {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.input {
+  min-height: 50px;
+  width: 100%;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--panel-line);
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 17px;
+}
+
+.input::placeholder {
+  color: rgba(244, 236, 216, 0.4);
+}
+
+.code {
+  font-family: var(--font-head);
+  font-size: 22px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.code::placeholder {
+  letter-spacing: 0.22em;
+}

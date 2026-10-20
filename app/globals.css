@@ -46,6 +46,31 @@ body {
   height: 100%;
 }
 
+/* Thin, felt-coloured scrollbars that only show a faint brass thumb. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(220, 176, 100, 0.28) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(220, 176, 100, 0.28);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(220, 176, 100, 0.5);
+}
+
 body {
   min-height: 100dvh;
   color: var(--text);

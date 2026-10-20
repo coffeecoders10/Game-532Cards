@@ -1,0 +1,85 @@
+.tile {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 22px 22px 18px;
+  border-radius: 24px;
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    translate 0.2s var(--ease-out),
+    border-color 0.2s,
+    box-shadow 0.2s var(--ease-out);
+}
+
+a.tile:hover {
+  translate: 0 -4px;
+  border-color: var(--brass);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+}
+
+a.tile:active {
+  translate: 0 0;
+}
+
+.emblem {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.name {
+  font-family: var(--font-head);
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.tagline {
+  color: var(--text-dim);
+  font-size: 15px;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-line);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.play {
+  font-weight: 800;
+  color: var(--lamp);
+}
+
+.soon {
+  align-content: center;
+  border-style: dashed;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  min-height: 180px;
+}
+
+.soon .name {
+  font-size: 22px;
+  color: var(--text-dim);
+}

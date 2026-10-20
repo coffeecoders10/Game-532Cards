@@ -1,0 +1,29 @@
+.mark {
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-dim);
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.mark:hover,
+.mark:focus-visible {
+  opacity: 1;
+}
+
+.mark strong {
+  font-weight: 800;
+  color: var(--text);
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+}

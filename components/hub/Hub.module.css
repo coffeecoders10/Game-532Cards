@@ -1,0 +1,125 @@
+.page {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: clamp(20px, 3.5vh, 36px);
+  padding-top: calc(env(safe-area-inset-top) + clamp(12px, 3vh, 32px));
+}
+
+.hero {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.copy {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+/* Wide screens: words on the left, the card fan on the right, so the games stay near the top. */
+@media (min-width: 760px) {
+  .hero {
+    grid-template-columns: auto auto;
+    align-items: center;
+    column-gap: clamp(40px, 7vw, 96px);
+    text-align: left;
+  }
+
+  .copy {
+    justify-items: start;
+  }
+
+  .fan {
+    margin-top: 0;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  animation: drop 0.8s var(--ease-spring) backwards;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.title {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: clamp(40px, 9vw, 64px);
+  line-height: 1;
+  color: var(--lamp);
+  text-shadow: 0 6px 0 rgba(90, 66, 32, 0.55), 0 16px 34px rgba(0, 0, 0, 0.45);
+  animation: drop 0.8s var(--ease-spring) backwards;
+}
+
+.tagline {
+  max-width: 34ch;
+  font-size: clamp(17px, 2.4vw, 20px);
+}
+
+.fan {
+  --cw: clamp(48px, 11vw, 72px);
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  padding: 6px 0 8px;
+}
+
+
+.fanCard {
+  margin-left: calc(var(--cw) * -0.42);
+  transform-origin: 50% 140%;
+  rotate: calc(var(--d) * 7deg);
+  translate: 0 calc(var(--d) * var(--d) * 3px);
+  animation: dealIn 0.8s var(--ease-out) calc(var(--k) * 90ms + 300ms) backwards;
+}
+
+.fanCard:first-child {
+  margin-left: 0;
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 18px;
+  width: min(100%, 980px);
+  animation: rise 0.6s var(--ease-out) 0.5s backwards;
+}
+
+@keyframes drop {
+  from {
+    translate: 0 -50px;
+    opacity: 0;
+    scale: 0.9;
+  }
+}
+
+@keyframes dealIn {
+  from {
+    translate: 0 -60dvh;
+    rotate: -40deg;
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    translate: 0 20px;
+    opacity: 0;
+  }
+}

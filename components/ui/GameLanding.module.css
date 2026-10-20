@@ -1,0 +1,73 @@
+.page {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: clamp(24px, 5vh, 48px);
+}
+
+@media (min-width: 900px) {
+  .page {
+    grid-template-columns: minmax(0, 520px) minmax(0, 380px);
+    justify-content: center;
+    column-gap: clamp(48px, 8vw, 120px);
+  }
+}
+
+.watermark {
+  grid-column: 1 / -1;
+}
+
+.back {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: 8px;
+}
+
+.hero {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 3vw, 22px);
+  font-weight: 400;
+}
+
+.tagline {
+  max-width: 28ch;
+  font-size: clamp(17px, 2.4vw, 20px);
+  color: var(--text);
+}
+
+.fan {
+  --cw: clamp(58px, 15vw, 84px);
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+  padding: 10px 0 14px;
+}
+
+.fanCard {
+  margin-left: calc(var(--cw) * -0.42);
+  transform-origin: 50% 140%;
+  rotate: calc(var(--d) * 7deg);
+  translate: 0 calc(var(--d) * var(--d) * 3px);
+  animation: dealIn 0.8s var(--ease-out) calc(var(--k) * 90ms + 400ms) backwards;
+}
+
+.fanCard:first-child {
+  margin-left: 0;
+}
+
+@keyframes dealIn {
+  from {
+    translate: 0 -60dvh;
+    rotate: -40deg;
+    opacity: 0;
+  }
+}

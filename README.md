@@ -1,13 +1,15 @@
-# 5-3-2
+# CC Card Games
 
-A three-player, turn-based card game for the browser. Built with Next.js (App Router), plain CSS Modules, and the shared Socket.IO room service described in [docs/sop-socket.md](docs/sop-socket.md).
+A hub of playing-card games for the browser. Currently: **5-3-2**, a three-player, turn-based trick-taking game. The shared look and feel, and how to add a game, are in [DESIGN.md](DESIGN.md).
+
+Built with Next.js (App Router), plain CSS Modules, and the shared Socket.IO room service described in [docs/sop-socket.md](docs/sop-socket.md).
 
 ```bash
 npm install
 npm run dev     # must be served from http://localhost:3000 (the socket service's allowed origin)
 ```
 
-Open a table on the home page, send the six-character code (or the invite link) to two friends, and deal.
+Pick 5-3-2 on the hub, open a table, send the six-character code (or the invite link) to two friends, and deal.
 
 ## How it plays
 
@@ -22,16 +24,21 @@ Open a table on the home page, send the six-character code (or the invite link) 
 
 | Path | What it is |
 | --- | --- |
-| `lib/game/` | Pure game rules (`engine.ts`), cards and deck (`cards.ts`), and the per-player view projection (`view.ts`). No React, no networking. |
-| `lib/net/` | Networking on top of the socket service: `host.ts`, `guest.ts`, `crypto.ts`, `room.ts` (Socket.IO transport), `protocol.ts`, and the `useTable` hook. |
-| `components/` | The table UI: `Table`, `Hand`, `Seat`, `TrickArea`, `Overlays`, `Lobby`, and the home and status screens. |
-| `app/` | Routes: `/` (create or join) and `/room/[code]`. |
+| `app/` | Routes: `/` (the hub), `/games/532` (5-3-2 landing) and `/games/532/room/[code]` (a table). |
+| `games/registry.tsx` | The list of games shown on the hub. Add an entry to add a tile. |
+| `games/532/game/` | Pure 5-3-2 rules (`engine.ts`), deck (`deck.ts`), and the per-player view projection (`view.ts`). No React, no networking. |
+| `games/532/net/` | Networking on top of the socket service: `host.ts`, `guest.ts`, `crypto.ts`, `room.ts` (Socket.IO transport), `protocol.ts`, and the `useTable` hook. |
+| `games/532/components/` | The 5-3-2 table UI: `Table`, `Hand`, `Seat`, `TrickArea`, `Overlays`, `Lobby`, the landing page and rules. |
+| `components/ui/` | Shared building blocks every game uses: `GameLanding`, `Panel`, `Button`, `TextField`, `RulesDialog`, `StatusScreen`... |
+| `components/cards/` | `PlayingCard` and suit icons, shared by all games. |
+| `components/hub/` | The hub landing page and game tiles. |
+| `lib/cards/`, `lib/hooks/` | Game-agnostic card types and helpers, and shared React hooks. |
 
 ## Multiplayer design
 
 The socket service is a plain broadcast relay: it has no game logic, no authentication, and every message reaches everyone in the room. So:
 
-- **The host's browser is the game server.** It runs `lib/game/engine.ts`, holds the only copy of the full state (including the undealt cards), and validates every action: whose turn it is, follow-suit, trump, exchanges. Guests only send intents (`play`, `trump`, `give`, `ready`) and render the view they receive.
+- **The host's browser is the game server.** It runs `games/532/game/engine.ts`, holds the only copy of the full state (including the undealt cards), and validates every action: whose turn it is, follow-suit, trump, exchanges. Guests only send intents (`play`, `trump`, `give`, `ready`) and render the view they receive.
 - **Hands are private.** Each guest and the host agree a key with ECDH (P-256) and every message that carries a view or an action is sealed with AES-GCM. Anyone else in the room, including someone who guesses the room code, sees only ciphertext. A forged action fails to decrypt, so it can't impersonate a player. The first host a guest hears from is pinned for that session.
 - **Random draws** for exchanges use `crypto.getRandomValues` on the host; the drawn card is revealed only to the player who earned the exchange.
 - **Disconnects.** The host watches the room's `status` events. If a seated player drops mid-game the table pauses; they rejoin by reopening the link (same tab keeps the seat, a new tab can take over a vacant one). Before the game starts a departing player simply frees their seat. If the host drops, guests see a banner and the game resumes when the host reloads (the host's table state is kept in `sessionStorage`). "Leave" by the host ends the table for everyone.

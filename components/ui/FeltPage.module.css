@@ -1,0 +1,8 @@
+.page {
+  min-height: 100dvh;
+  padding: calc(env(safe-area-inset-top) + 28px) 20px calc(env(safe-area-inset-bottom) + 28px);
+  background:
+    radial-gradient(ellipse 60% 46% at 50% 28%, rgba(255, 220, 148, 0.16), transparent 70%),
+    radial-gradient(ellipse 90% 80% at 50% 40%, var(--felt-hi), var(--felt-mid) 48%, var(--felt-lo));
+  overflow: hidden;
+}

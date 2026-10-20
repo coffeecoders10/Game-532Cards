@@ -1,5 +1,5 @@
-import { Home } from "@/components/Home";
+import { Hub } from "@/components/hub/Hub";
 
 export default function Page() {
-  return <Home />;
+  return <Hub />;
 }
