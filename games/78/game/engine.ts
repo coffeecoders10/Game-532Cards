@@ -11,7 +11,7 @@ import { buildDeck } from "./deck";
 
 /**
  * Authoritative 7-8 rules. Everything here is pure: each action takes a Game and returns a
- * new Game, or throws a RuleError. Two seats, fixed roles: one player is the 8 (picks trump,
+ * new Game, or throws a RuleError. Two seats; roles swap every deal: the 8 (picks trump,
  * leads the first hand) and the other is the 7.
  */
 
@@ -42,7 +42,7 @@ export interface TrickPlay {
   slot: number | null;
 }
 
-/** Hands owed from the previous deal: `taker` swaps cards with `giver`, one swap per hand. */
+/** Swaps earned by the previous deal: `taker` (who won extra hands) takes cards from `giver`, one swap per extra hand. */
 export interface Debt {
   taker: number;
   giver: number;
@@ -52,7 +52,7 @@ export interface Debt {
 export interface DealSummary {
   wins: number[];
   targets: number[];
-  /** What the next deal owes: set when someone won more than their target. */
+  /** Swaps for the next deal: set when someone won more than their target. */
   debt: Debt | null;
 }
 
@@ -74,7 +74,7 @@ export interface SwapRecord {
 
 export interface Game {
   deal: number;
-  /** Role (7 or 8) of each seat; fixed for the whole session. */
+  /** Role (7 or 8) of each seat; the two swap after every deal. */
   roles: number[];
   hands: Card[][];
   table: Stack[][];
@@ -147,13 +147,14 @@ export function trickWinnerSeat(trick: readonly TrickPlay[], trump: Suit): numbe
 }
 
 /**
- * Who owes whom after a deal. A player who won more hands than their target has taken them
- * from the other, who earns one card swap per hand taken in the next deal.
+ * Who swaps with whom after a deal. A player who won more hands than their target took them
+ * from the other, and earns one card swap per extra hand in the next deal, taking cards from
+ * the player who fell short.
  */
 export function computeDebt(wins: readonly number[], targets: readonly number[]): Debt | null {
-  for (const giver of [0, 1]) {
-    const extra = wins[giver] - targets[giver];
-    if (extra > 0) return { taker: otherSeat(giver), giver, count: extra };
+  for (const taker of [0, 1]) {
+    const extra = wins[taker] - targets[taker];
+    if (extra > 0) return { taker, giver: otherSeat(taker), count: extra };
   }
   return null;
 }
@@ -403,6 +404,10 @@ export function markReady(game: Game, seat: number, randomInt: RandomInt): Game 
   const g = structuredClone(game);
   if (g.step !== "summary" || !g.summary) fail("The deal isn't finished.");
   g.ready[seat] = true;
-  if (g.ready.every(Boolean)) dealHands(g, g.summary.debt, randomInt);
+  if (g.ready.every(Boolean)) {
+    // The roles trade places for the next deal; the swaps belong to the seats, not the roles.
+    g.roles = g.roles.map((r) => (r === 8 ? 7 : 8));
+    dealHands(g, g.summary.debt, randomInt);
+  }
   return g;
 }

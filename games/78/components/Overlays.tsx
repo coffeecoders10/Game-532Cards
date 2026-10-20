@@ -149,9 +149,9 @@ export function DealSummary({ view, game, disabled, onReady, onLeave }: SummaryP
   let owes: string;
   if (!debt) owes = "Nobody owes anything, so there are no swaps next deal.";
   else if (debt.giver === view.you) {
-    owes = `You took ${plural(debt.count, "hand", "hands")} too many. ${nameOf(view, debt.taker)} gets ${plural(debt.count, "swap", "swaps")} with you next deal.`;
+    owes = `${nameOf(view, debt.taker)} won ${plural(debt.count, "hand", "hands")} over target and gets ${plural(debt.count, "swap", "swaps")} with you next deal.`;
   } else {
-    owes = `${nameOf(view, debt.giver)} took ${plural(debt.count, "hand", "hands")} too many. You get ${plural(debt.count, "swap", "swaps")} with them next deal.`;
+    owes = `You won ${plural(debt.count, "hand", "hands")} over target, so you get ${plural(debt.count, "swap", "swaps")} with ${nameOf(view, debt.giver)} next deal.`;
   }
 
   return (

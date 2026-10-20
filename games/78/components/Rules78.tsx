@@ -4,7 +4,7 @@ export function Rules78() {
     <ol>
       <li>
         <strong>Two players, fifteen hands.</strong> One player is the 8 and wants 8 hands, the other is the 7 and wants
-        7. Roles stay the same for the whole evening.
+        7. Roles trade places after every deal.
       </li>
       <li>
         <strong>The deck is 30 cards:</strong> 8 through Ace in every suit, plus the 7 of spades and 7 of hearts. Ace is
@@ -27,9 +27,9 @@ export function Rules78() {
         winner leads next.
       </li>
       <li>
-        <strong>Owing hands.</strong> Win more than your number and you owe the other player the extra hands. Next
-        deal they get one card swap for each: take one of your face-up cards, or a random card from your hand, and give
-        back any card of theirs.
+        <strong>Extra hands.</strong> Win more than your number and you earn one card swap for each extra hand. In
+        the next deal, take one of the other player&apos;s face-up cards, or a random card from their hand, and give back
+        one of yours.
       </li>
       <li>
         <strong>Keep going.</strong> After the fifteenth hand, deal again. There is no last deal.

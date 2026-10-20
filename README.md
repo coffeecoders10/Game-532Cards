@@ -22,11 +22,11 @@ Pick 5-3-2 on the hub, open a table, send the six-character code (or the invite 
 
 ## How 7-8 plays
 
-Same 30-card deck, two players, fixed roles: the **8** wants 8 of the 15 hands, the **7** wants 7.
+Same 30-card deck, two players. The **8** wants 8 of the 15 hands, the **7** wants 7, and the roles trade places after every deal.
 
 1. Each player gets 5 cards in hand; the 8 picks trump, then everyone gets five face-down cards with a face-up card on top of each.
 2. Play from your hand or any face-up table card; playing a table card flips the card beneath. Follow suit across both. The 8 leads the first hand, winners lead after.
-3. Win more than your number and you owe the difference: next deal the other player gets one swap per hand owed, taking either a chosen face-up card or a random hand card, and giving one of their own back.
+3. Win more than your number and you earn a swap per extra hand: next deal you take either a chosen face-up card or a random hand card from the other player, and give one of yours back.
 4. Deals continue until players leave.
 
 ## Code layout
