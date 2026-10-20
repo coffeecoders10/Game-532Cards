@@ -16,7 +16,7 @@ const ui = Figtree({
 export const metadata: Metadata = {
   title: { default: "Card Games by CoffeeCoders", template: "%s · Card Games by CoffeeCoders" },
   description: "Playing-card games to play online with friends. Pick a game, share a code, deal.",
-  openGraph: { images: [{ url: "/cardgames_logo.png", width: 512, height: 512 }] },
+  openGraph: { images: [{ url: `${process.env.NEXT_PUBLIC_BASE_PATH}/cardgames_logo.png`, width: 512, height: 512 }] },
 };
 
 export const viewport: Viewport = {

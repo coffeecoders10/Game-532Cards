@@ -12,7 +12,7 @@ export function Watermark({ className }: { className?: string }) {
       rel="noopener noreferrer"
       className={[styles.mark, className].filter(Boolean).join(" ")}
     >
-      <Image src="/coffeecoders_logo.png" alt="" width={28} height={28} className={styles.logo} />
+      <Image src={`${process.env.NEXT_PUBLIC_BASE_PATH}/coffeecoders_logo.png`} alt="" width={28} height={28} className={styles.logo} />
       <span>
         Built by <strong>CoffeeCoders</strong>
       </span>
