@@ -1,2 +1,45 @@
-# Game-532Cards
-A classic 5-3-2 Card game from india
+# 5-3-2
+
+A three-player, turn-based card game for the browser. Built with Next.js (App Router), plain CSS Modules, and the shared Socket.IO room service described in [docs/sop-socket.md](docs/sop-socket.md).
+
+```bash
+npm install
+npm run dev     # must be served from http://localhost:3000 (the socket service's allowed origin)
+```
+
+Open a table on the home page, send the six-character code (or the invite link) to two friends, and deal.
+
+## How it plays
+
+30 cards: 8 to Ace in four suits, plus the 7 of spades and 7 of hearts. Each round has 10 hands and the three players carry targets of 5, 3 and 2 hands.
+
+1. Everyone gets 5 cards; the player holding the **5** picks trump, then everyone gets 5 more.
+2. From round 2, anyone who **won more than their target** trades with anyone who **fell short**, one trade per hand of difference. The taker draws a random card from the other player's hand, sees it, then gives back any card of their own.
+3. The 5 leads. Follow suit if you can; highest trump wins, otherwise highest card of the led suit. The winner leads next.
+4. After the round the targets rotate: 5 becomes 2, 3 becomes 5, 2 becomes 3. Rounds continue until you stop.
+
+## Code layout
+
+| Path | What it is |
+| --- | --- |
+| `lib/game/` | Pure game rules (`engine.ts`), cards and deck (`cards.ts`), and the per-player view projection (`view.ts`). No React, no networking. |
+| `lib/net/` | Networking on top of the socket service: `host.ts`, `guest.ts`, `crypto.ts`, `room.ts` (Socket.IO transport), `protocol.ts`, and the `useTable` hook. |
+| `components/` | The table UI: `Table`, `Hand`, `Seat`, `TrickArea`, `Overlays`, `Lobby`, and the home and status screens. |
+| `app/` | Routes: `/` (create or join) and `/room/[code]`. |
+
+## Multiplayer design
+
+The socket service is a plain broadcast relay: it has no game logic, no authentication, and every message reaches everyone in the room. So:
+
+- **The host's browser is the game server.** It runs `lib/game/engine.ts`, holds the only copy of the full state (including the undealt cards), and validates every action: whose turn it is, follow-suit, trump, exchanges. Guests only send intents (`play`, `trump`, `give`, `ready`) and render the view they receive.
+- **Hands are private.** Each guest and the host agree a key with ECDH (P-256) and every message that carries a view or an action is sealed with AES-GCM. Anyone else in the room, including someone who guesses the room code, sees only ciphertext. A forged action fails to decrypt, so it can't impersonate a player. The first host a guest hears from is pinned for that session.
+- **Random draws** for exchanges use `crypto.getRandomValues` on the host; the drawn card is revealed only to the player who earned the exchange.
+- **Disconnects.** The host watches the room's `status` events. If a seated player drops mid-game the table pauses; they rejoin by reopening the link (same tab keeps the seat, a new tab can take over a vacant one). Before the game starts a departing player simply frees their seat. If the host drops, guests see a banner and the game resumes when the host reloads (the host's table state is kept in `sessionStorage`). "Leave" by the host ends the table for everyone.
+- Guests ask the host for the current view every 5 seconds, so a dropped message can't leave anyone stuck.
+
+### Limits worth knowing
+
+- Because the host runs the game, a determined host could read the full state in their own browser. Players have to trust the host the way they would trust whoever deals at a real table.
+- Identity is per browser tab (`sessionStorage`); there are no accounts.
+- The socket service only accepts the origins listed in the SOP (`http://localhost:3000`, `http://127.0.0.1:3000`, `https://coffeecoders.cc`).
+- Connection settings default to the values in the SOP and can be overridden with `NEXT_PUBLIC_SOCKET_URL` and `NEXT_PUBLIC_SOCKET_PATH`.

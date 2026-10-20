@@ -1,0 +1,207 @@
+/* Size a card by setting --cw on it or any ancestor. Everything inside scales with it (cqw). */
+/*
+ * cqw units resolve against the *nearest ancestor* container, so declarations on the card element
+ * itself use --u (1% of the card width) instead. Children can use cqw safely.
+ */
+.card {
+  --suit: var(--ink);
+  --w: var(--cw, 72px);
+  --u: calc(var(--w) / 100);
+  position: relative;
+  display: block;
+  flex: none;
+  width: var(--w);
+  aspect-ratio: 5 / 7;
+  container-type: inline-size;
+  border: 0;
+  padding: 0;
+  border-radius: calc(var(--u) * 7);
+  user-select: none;
+  -webkit-user-select: none;
+  color: var(--suit);
+  box-shadow:
+    0 0 0 calc(var(--u) * 0.6) rgba(0, 0, 0, 0.12),
+    0 calc(var(--u) * 1.2) calc(var(--u) * 2.4) rgba(0, 0, 0, 0.35),
+    0 calc(var(--u) * 0.3) calc(var(--u) * 0.6) rgba(0, 0, 0, 0.3);
+  transition:
+    filter 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out),
+    translate 0.28s var(--ease-out),
+    rotate 0.28s var(--ease-out);
+}
+
+.red {
+  --suit: var(--red);
+}
+
+/* ---------------------------------------------------------------- face */
+
+.face {
+  background:
+    radial-gradient(120% 90% at 30% 10%, #fffdf6 0%, transparent 60%),
+    var(--paper);
+  font-family: var(--font-head);
+}
+
+.corner {
+  position: absolute;
+  left: 7cqw;
+  top: 5cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 18cqw;
+  line-height: 1;
+  gap: 1.5cqw;
+}
+
+.corner b {
+  font-weight: 400;
+  font-size: 22cqw;
+  letter-spacing: -0.04em;
+}
+
+.corner svg {
+  width: 14cqw;
+  height: 14cqw;
+}
+
+.cornerFlip {
+  left: auto;
+  top: auto;
+  right: 7cqw;
+  bottom: 5cqw;
+  transform: rotate(180deg);
+}
+
+.pipSlot {
+  position: absolute;
+  width: 20cqw;
+  height: 20cqw;
+  translate: -50% -50%;
+}
+
+.pip {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pipFlip {
+  rotate: 180deg;
+}
+
+.ace {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 46cqw;
+  height: 46cqw;
+  translate: -50% -50%;
+}
+
+.royal {
+  position: absolute;
+  inset: 17% 24%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4cqw 0;
+  border-radius: 4cqw;
+  border: 0.9cqw solid color-mix(in srgb, var(--suit) 45%, transparent);
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--suit) 9%, transparent) 0 1.2cqw, transparent 1.2cqw 4cqw),
+    color-mix(in srgb, var(--paper-edge) 55%, var(--paper));
+}
+
+.royal b {
+  font-weight: 400;
+  font-size: 40cqw;
+  line-height: 1;
+}
+
+.royalSuit {
+  width: 12cqw;
+  height: 12cqw;
+}
+
+/* ---------------------------------------------------------------- back */
+
+.back {
+  background:
+    radial-gradient(circle at 50% 50%, var(--brass) 0 calc(var(--u) * 6), transparent calc(var(--u) * 6.5)),
+    repeating-linear-gradient(45deg, rgba(220, 176, 100, 0.34) 0 calc(var(--u) * 0.8), transparent calc(var(--u) * 0.8) calc(var(--u) * 6)),
+    repeating-linear-gradient(-45deg, rgba(220, 176, 100, 0.34) 0 calc(var(--u) * 0.8), transparent calc(var(--u) * 0.8) calc(var(--u) * 6)),
+    linear-gradient(160deg, #6a2431, #45161f);
+  border: calc(var(--u) * 2.6) solid var(--paper);
+}
+
+.back::after {
+  content: "";
+  position: absolute;
+  inset: 3cqw;
+  border-radius: 5cqw;
+  border: 0.8cqw solid var(--brass);
+  opacity: 0.85;
+}
+
+.crest {
+  position: absolute;
+  inset: 0;
+}
+
+/* -------------------------------------------------------------- states */
+
+button.card {
+  cursor: pointer;
+}
+
+button.card:hover:not(.disabled),
+button.card:focus-visible {
+  box-shadow:
+    0 0 0 calc(var(--u) * 0.6) rgba(0, 0, 0, 0.12),
+    0 calc(var(--u) * 3) calc(var(--u) * 5) rgba(0, 0, 0, 0.45);
+}
+
+.disabled {
+  filter: brightness(0.62) saturate(0.55);
+  cursor: not-allowed;
+}
+
+.selected {
+  box-shadow:
+    0 0 0 calc(var(--u) * 1.4) var(--lamp),
+    0 0 calc(var(--u) * 6) calc(var(--u) * 2) rgba(255, 220, 148, 0.55),
+    0 calc(var(--u) * 3) calc(var(--u) * 5) rgba(0, 0, 0, 0.45);
+}
+
+/* A card that just arrived through an exchange. */
+.fresh {
+  animation: freshGlow 2.6s var(--ease-out) 0.4s both;
+}
+
+@keyframes freshGlow {
+  0%,
+  60% {
+    box-shadow:
+      0 0 0 calc(var(--u) * 1.4) var(--good),
+      0 0 calc(var(--u) * 7) calc(var(--u) * 3) rgba(127, 209, 155, 0.65),
+      0 calc(var(--u) * 3) calc(var(--u) * 5) rgba(0, 0, 0, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* A trump marker: a small brass notch under the corner index. */
+.trump::before {
+  content: "";
+  position: absolute;
+  left: 8.5cqw;
+  top: 44.5cqw;
+  width: 15cqw;
+  height: 1.8cqw;
+  border-radius: 1cqw;
+  background: var(--brass-dim);
+}

@@ -1,0 +1,66 @@
+.screen {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, var(--felt-hi), var(--felt-mid) 50%, var(--felt-lo));
+}
+
+.shuffle {
+  position: relative;
+  width: 120px;
+  height: 90px;
+  margin-bottom: 12px;
+}
+
+.flit {
+  position: absolute;
+  left: 31px;
+  top: 0;
+  transform-origin: 50% 120%;
+  animation: flit 1.5s var(--ease-out) infinite;
+  animation-delay: calc(var(--n) * 0.18s);
+}
+
+@keyframes flit {
+  0%,
+  100% {
+    rotate: -18deg;
+    translate: -28px 0;
+  }
+  50% {
+    rotate: 18deg;
+    translate: 28px -8px;
+  }
+}
+
+.title {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: clamp(28px, 7vw, 40px);
+  line-height: 1.1;
+}
+
+.body {
+  max-width: 38ch;
+  color: var(--text-dim);
+}
+
+.button {
+  display: inline-grid;
+  place-items: center;
+  min-height: 46px;
+  margin-top: 8px;
+  padding: 0 24px;
+  border-radius: 14px;
+  background: var(--lamp);
+  color: #2b1d0a;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow:
+    0 4px 0 #b88a3a,
+    0 10px 20px rgba(0, 0, 0, 0.35);
+}

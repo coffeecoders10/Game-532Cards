@@ -1,0 +1,51 @@
+.hand {
+  --cw: clamp(54px, 16vw, 104px);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: calc(var(--cw) * 1.4 + 44px);
+  padding: 34px 12px 12px;
+  perspective: 900px;
+}
+
+.card {
+  margin-left: calc(var(--cw) * -0.5);
+  transform-origin: 50% 130%;
+  rotate: calc(var(--d) * 2.2deg);
+  translate: 0 calc(var(--d) * var(--d) * 1.1px);
+  animation: deal 0.65s var(--ease-out) calc(var(--k) * 60ms) backwards;
+}
+
+.card:first-child {
+  margin-left: 0;
+}
+
+/* On your move, playable cards rise a little so the choice reads at a glance. */
+.hand[data-turn="true"] .card:not([aria-disabled="true"]) {
+  translate: 0 calc(var(--d) * var(--d) * 1.1px - 10px);
+}
+
+@media (hover: hover) {
+  .hand .card:not([aria-disabled="true"]):hover {
+    translate: 0 calc(var(--d) * var(--d) * 1.1px - 26px);
+    rotate: 0deg;
+    z-index: 3;
+  }
+}
+
+.hand[data-turn] .card.lift,
+.hand .card.lift {
+  translate: 0 calc(var(--d) * var(--d) * 1.1px - 30px);
+  rotate: 0deg;
+  z-index: 3;
+}
+
+@keyframes deal {
+  from {
+    translate: calc(var(--d) * -30px) -78dvh;
+    rotate: -40deg;
+    scale: 0.6;
+    opacity: 0;
+  }
+}
