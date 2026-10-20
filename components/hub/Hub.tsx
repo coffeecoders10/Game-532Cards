@@ -24,7 +24,7 @@ export function Hub() {
       <header className={styles.hero}>
         <div className={styles.copy}>
           <div className={styles.brand}>
-            <Image src="/coffeecoders_logo.png" alt="" width={44} height={44} priority className={styles.logo} />
+            <Image src="/cardgames_logo.png" alt="" width={44} height={44} priority className={styles.logo} />
             <p className={styles.eyebrow}>Coffee Coders</p>
           </div>
           <h1 className={styles.title}>Card Games</h1>
