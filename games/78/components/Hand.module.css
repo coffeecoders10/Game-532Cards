@@ -17,6 +17,10 @@
   animation: deal 0.65s var(--ease-out) calc(var(--k) * 60ms) backwards;
 }
 
+.hand .card:not(.can) {
+  cursor: default;
+}
+
 .card:first-child {
   margin-left: 0;
 }

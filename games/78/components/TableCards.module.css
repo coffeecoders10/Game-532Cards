@@ -45,6 +45,10 @@
   top: var(--peek);
 }
 
+.column > .up:not(.can) {
+  cursor: default;
+}
+
 .column > .up {
   z-index: 2;
   animation: reveal 0.6s var(--ease-out) var(--delay) backwards;

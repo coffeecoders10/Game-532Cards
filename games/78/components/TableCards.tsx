@@ -38,7 +38,7 @@ export function TableCards({ stacks, side, trump, choosable, selected, marked, f
           "--delay": dealing ? `${slot * 70 + 450}ms` : "0ms",
         } as CSSProperties;
         return (
-          <div key={slot} className={styles.column} style={style} data-empty={!up && !stack.hasDown} data-marked={marked === slot}>
+          <div key={slot} className={styles.column} style={style} data-empty={!up && !stack.hasDown} data-marked={marked === slot} data-origin={`${side}-${slot}`}>
             {stack.hasDown && <PlayingCard faceDown back="rosette" className={styles.down} />}
             {up && (
               <PlayingCard
@@ -49,7 +49,8 @@ export function TableCards({ stacks, side, trump, choosable, selected, marked, f
                 disabled={choosable !== null && !pickable}
                 selected={selected === slot}
                 fresh={fresh === slot}
-                onClick={pickable ? () => onChoose(slot) : undefined}
+                // Always a button, so a card keeps its element (and doesn't replay its entrance) as turns change.
+                onClick={() => pickable && onChoose(slot)}
               />
             )}
           </div>

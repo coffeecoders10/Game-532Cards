@@ -86,7 +86,7 @@ export function Seat({
       </div>
 
       {position !== "me" && handCount > 0 && (
-        <div className={styles.fan} aria-label={`${handCount} cards`}>
+        <div className={styles.fan} aria-label={`${handCount} cards`} data-origin="fan">
           {Array.from({ length: handCount }, (_, i) => (
             <PlayingCard
               key={i}

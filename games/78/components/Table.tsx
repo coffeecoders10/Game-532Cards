@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { type Card, SUIT_NAMES, cardKey } from "@/lib/cards/cards";
 import { useMediaQuery } from "@/lib/hooks/useClientValue";
 import { Lobby } from "@/components/table/Lobby";
@@ -15,7 +15,7 @@ import { Hand } from "./Hand";
 import { DealIntro, DealSummary, SwapPanel, SwapToast } from "./Overlays";
 import { Rules78 } from "./Rules78";
 import { TableCards } from "./TableCards";
-import { TrickArea } from "./TrickArea";
+import { TrickArea, type PlayOrigin } from "./TrickArea";
 import styles from "./Table.module.css";
 
 /** A pickable card is named by where it is: `h:<card>` in your hand, `m:<n>` your column n, `o:<n>` theirs. */
@@ -61,6 +61,8 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Tabl
   const [selected, setSelected] = useState<string | null>(null);
   const [lastSwapSeen, setLastSwapSeen] = useState<number | null>(null);
   const [swapToastOn, setSwapToastOn] = useState(false);
+  /** Where the card I just played was lying, so it can slide to the middle from there. */
+  const myOrigin = useRef<PlayOrigin | null>(null);
 
   const live = !!game && !view.paused;
   const myTurn = live && game.step === "play" && game.turn === you;
@@ -125,7 +127,12 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Tabl
       }
       const place = toPlace(key);
       setSelected(null);
-      if (place) act({ type: "play", place });
+      if (place) {
+        const card = place.zone === "hand" ? place.card : game?.table[you][place.slot].up;
+        const el = document.querySelector(place.zone === "hand" ? `[data-key="${cardKey(place.card)}"]` : `[data-origin="mine-${place.slot}"]`);
+        if (card && el) myOrigin.current = { key: cardKey(card), rect: el.getBoundingClientRect() };
+        act({ type: "play", place });
+      }
       return;
     }
     setSelected(active === key ? null : key);
@@ -260,7 +267,7 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Tabl
             />
           )}
 
-          {game && (game.step === "play" || game.step === "trickDone") && <TrickArea view={view} game={game} />}
+          {game && (game.step === "play" || game.step === "trickDone") && <TrickArea view={view} game={game} myOrigin={myOrigin} />}
 
           {swapToastOn && lastSwap?.received && lastSwap.gave && (
             <div className={styles.toastDock}>

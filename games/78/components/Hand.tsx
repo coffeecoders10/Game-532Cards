@@ -25,7 +25,7 @@ export function Hand({ cards, trump, choosable, selected, freshKey, onChoose }: 
 
   const n = sorted.length;
   return (
-    <div className={styles.hand} ref={ref} role="group" aria-label="Your hand" data-turn={choosable !== null}>
+    <div className={styles.hand} ref={ref} role="group" aria-label="Your hand" data-turn={choosable !== null} data-origin="mine-hand">
       {sorted.map((card, i) => {
         const key = cardKey(card);
         const pickable = choosable?.has(key) ?? false;
@@ -40,7 +40,7 @@ export function Hand({ cards, trump, choosable, selected, freshKey, onChoose }: 
             selected={selected === key}
             fresh={freshKey === key}
             dataKey={key}
-            onClick={pickable ? () => onChoose(card) : undefined}
+            onClick={() => pickable && onChoose(card)}
           />
         );
       })}

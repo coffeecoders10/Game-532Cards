@@ -38,9 +38,6 @@
   top: 50%;
   width: var(--cw);
   margin: calc(var(--cw) * -0.7) 0 0 calc(var(--cw) * -0.5);
-  animation:
-    toss 0.55s var(--ease-out) backwards,
-    sweep 0.55s cubic-bezier(0.5, 0, 0.9, 0.4) 1.55s forwards;
 }
 
 .slot[data-order="0"] {
@@ -53,17 +50,9 @@
   rotate: 5deg;
 }
 
-.slot[data-from="mine"] {
-  --fy: 34dvh;
-}
-
-.slot[data-from="theirs"] {
-  --fy: -34dvh;
-}
-
 /* The sweep only runs once the hand is complete */
-.trick:not([data-done="true"]) .slot {
-  animation: toss 0.55s var(--ease-out) backwards;
+.trick[data-done="true"] .slot {
+  animation: sweep 0.55s cubic-bezier(0.5, 0, 0.9, 0.4) 1.55s forwards;
 }
 
 .trick[data-winner="mine"] {
@@ -72,18 +61,6 @@
 
 .trick[data-winner="theirs"] {
   --ty: -34dvh;
-}
-
-@keyframes toss {
-  from {
-    translate: calc(var(--cw) * 0.1) var(--fy);
-    rotate: 40deg;
-    scale: 0.8;
-    opacity: 0;
-  }
-  35% {
-    opacity: 1;
-  }
 }
 
 @keyframes sweep {
