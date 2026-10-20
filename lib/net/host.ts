@@ -1,15 +1,5 @@
 import type { RandomInt } from "@/lib/cards/cards";
-import {
-  type Game,
-  RuleError,
-  chooseTrump,
-  collectTrick,
-  giveCard,
-  markReady,
-  newGame,
-  playCard,
-} from "../game/engine";
-import { type TableView, gameViewFor } from "../game/view";
+import { RuleError } from "@/lib/cards/rules";
 import {
   type Identity,
   deriveSharedKey,
@@ -19,12 +9,28 @@ import {
   secureRandomInt,
 } from "./crypto";
 import { cleanName, uniqueName } from "./names";
-import { type Action, type ToGuest, type Wire, parseToHost } from "./protocol";
 import type { RoomConnector, RoomLink } from "./room";
-import { clearTable, loadSnapshot, saveSnapshot } from "./storage";
+import type { TableStorage } from "./storage";
+import type { TableViewOf } from "./view";
+import { type CommonAction, type ToGuest, type Wire, parseToHost } from "./wire";
 
-/** How long a finished hand stays on the table before it is swept to the winner. */
-export const TRICK_PAUSE_MS = 2300;
+/**
+ * Everything the host needs to know about a particular game. The engine is pure: each call
+ * returns a new game state or throws a RuleError.
+ */
+export interface HostEngine<G, GV, A extends { type: string }> {
+  /** Seats at the table; seat 0 is the host. */
+  seats: number;
+  /** Shown when the host tries to deal before every seat is filled. */
+  startError: string;
+  newGame(randomInt: RandomInt): G;
+  act(game: G, seat: number, action: A, randomInt: RandomInt): G;
+  /** What `seat` is allowed to see of the game. */
+  view(game: G, seat: number): GV;
+  parseAction(action: Record<string, unknown>): A | null;
+  /** A step the table takes by itself after a delay, such as sweeping a finished trick. */
+  auto?(game: G): { delayMs: number; run(game: G): G } | null;
+}
 
 interface SeatRecord {
   id: string | null;
@@ -33,28 +39,33 @@ interface SeatRecord {
   key: CryptoKey | null;
 }
 
-interface Snapshot {
+interface Snapshot<G> {
   v: number;
-  game: Game | null;
+  game: G | null;
   seats: { id: string | null; name: string | null; pk: JsonWebKey | null }[];
 }
 
-export interface HostCallbacks {
-  onView(view: TableView): void;
+export interface HostCallbacks<V> {
+  onView(view: V): void;
   onConnection(online: boolean): void;
   onNotice(message: string): void;
 }
 
-export interface HostOptions {
+export interface HostOptions<G, GV, A extends { type: string }> {
+  engine: HostEngine<G, GV, A>;
+  storage: TableStorage;
   code: string;
   identity: Identity;
   name: string;
   connect: RoomConnector;
-  callbacks: HostCallbacks;
+  callbacks: HostCallbacks<TableViewOf<GV>>;
   randomInt?: RandomInt;
   /** Save the table to sessionStorage so a page refresh can resume it. */
   persist?: boolean;
 }
+
+const isCommon = (action: { type: string }): action is CommonAction =>
+  action.type === "start" || action.type === "leave" || action.type === "sync";
 
 const emptySeat = (): SeatRecord => ({ id: null, name: null, pk: null, key: null });
 
@@ -63,9 +74,9 @@ const emptySeat = (): SeatRecord => ({ id: null, name: null, pk: null, key: null
  * validates every action with the engine, and sends each player only their own view,
  * sealed so that nobody else in the shared room can read it.
  */
-export class HostSession {
-  private readonly seats: SeatRecord[] = [emptySeat(), emptySeat(), emptySeat()];
-  private game: Game | null = null;
+export class HostSession<G, GV, A extends { type: string }> {
+  private readonly seats: SeatRecord[];
+  private game: G | null = null;
   private v = 0;
   private present = new Set<string>();
   private link: RoomLink | null = null;
@@ -73,8 +84,9 @@ export class HostSession {
   private stopped = false;
   private readonly randomInt: RandomInt;
 
-  constructor(private readonly opts: HostOptions) {
+  constructor(private readonly opts: HostOptions<G, GV, A>) {
     this.randomInt = opts.randomInt ?? secureRandomInt;
+    this.seats = Array.from({ length: opts.engine.seats }, emptySeat);
     this.seats[0] = {
       id: opts.identity.id,
       name: cleanName(opts.name),
@@ -109,12 +121,12 @@ export class HostSession {
   async close() {
     const sends = this.seats.map((s, i) => (i > 0 && s.id ? this.sendTo(i, { k: "closed" }) : null));
     await Promise.all(sends);
-    clearTable(this.opts.code);
+    this.opts.storage.clearTable(this.opts.code);
     this.stop();
   }
 
   /** The host's own moves go through the same validation path as everyone else's. */
-  act(action: Action) {
+  act(action: A | CommonAction) {
     this.handleAction(0, action);
   }
 
@@ -122,7 +134,7 @@ export class HostSession {
 
   private restore() {
     if (!this.opts.persist) return;
-    const saved = loadSnapshot(this.opts.code) as Snapshot | null;
+    const saved = this.opts.storage.loadSnapshot(this.opts.code) as Snapshot<G> | null;
     if (!saved || saved.seats?.[0]?.id !== this.opts.identity.id) return;
     this.v = saved.v;
     this.game = saved.game;
@@ -133,12 +145,12 @@ export class HostSession {
 
   private persist() {
     if (!this.opts.persist) return;
-    const snapshot: Snapshot = {
+    const snapshot: Snapshot<G> = {
       v: this.v,
       game: this.game,
       seats: this.seats.map(({ id, name, pk }) => ({ id, name, pk })),
     };
-    saveSnapshot(this.opts.code, snapshot);
+    this.opts.storage.saveSnapshot(this.opts.code, snapshot);
   }
 
   // ------------------------------------------------------------------ state
@@ -152,13 +164,13 @@ export class HostSession {
     return this.game !== null && this.seats.some((_, i) => !this.isConnected(i));
   }
 
-  private viewFor(seat: number): TableView {
+  private viewFor(seat: number): TableViewOf<GV> {
     return {
       v: this.v,
       code: this.opts.code,
       you: seat,
       seats: this.seats.map((s, i) => ({ name: s.name, connected: this.isConnected(i) })),
-      game: this.game ? gameViewFor(this.game, seat) : null,
+      game: this.game ? this.opts.engine.view(this.game, seat) : null,
       paused: this.paused,
     };
   }
@@ -178,13 +190,18 @@ export class HostSession {
   }
 
   private scheduleAuto() {
-    if (this.timer || !this.game || this.game.step !== "trickDone" || this.paused) return;
+    if (this.timer || !this.game || this.paused) return;
+    const step = this.opts.engine.auto?.(this.game);
+    if (!step) return;
     this.timer = setTimeout(() => {
       this.timer = null;
-      if (this.stopped || !this.game || this.game.step !== "trickDone" || this.paused) return;
-      this.game = collectTrick(this.game);
+      if (this.stopped || !this.game || this.paused) return;
+      // The game may have moved on while we waited; only run the step that was scheduled.
+      const current = this.opts.engine.auto?.(this.game);
+      if (!current) return;
+      this.game = current.run(this.game);
       this.publish();
-    }, TRICK_PAUSE_MS);
+    }, step.delayMs);
   }
 
   private clearTimer() {
@@ -206,7 +223,7 @@ export class HostSession {
     return rec.key;
   }
 
-  private async sendTo(seat: number, payload: ToGuest) {
+  private async sendTo(seat: number, payload: ToGuest<TableViewOf<GV>>) {
     const to = this.seats[seat].id;
     const key = await this.keyFor(seat);
     if (!to || !key || !this.link) return;
@@ -274,14 +291,14 @@ export class HostSession {
     if (seat < 0) return;
     const key = await this.keyFor(seat);
     if (!key) return;
-    const message = parseToHost(await open(key, box));
+    const message = parseToHost(await open(key, box), this.opts.engine.parseAction);
     // A forged sender fails to decrypt; a replayed action is harmless because the engine re-validates it.
     if (message && this.seats[seat].id === box.from) this.handleAction(seat, message.action);
   }
 
   // ---------------------------------------------------------------- actions
 
-  private handleAction(seat: number, action: Action) {
+  private handleAction(seat: number, action: A | CommonAction) {
     try {
       this.apply(seat, action);
     } catch (error) {
@@ -290,40 +307,28 @@ export class HostSession {
     }
   }
 
-  private apply(seat: number, action: Action) {
-    if (action.type === "leave") {
+  private apply(seat: number, action: A | CommonAction) {
+    const { engine } = this.opts;
+    if (isCommon(action) && action.type === "leave") {
       this.leave(seat);
       return;
     }
-    if (action.type === "sync") {
+    if (isCommon(action) && action.type === "sync") {
       if (seat !== 0) void this.sendTo(seat, { k: "view", view: this.viewFor(seat) });
       return;
     }
-    if (action.type === "start") {
+    if (isCommon(action) && action.type === "start") {
       if (seat !== 0) throw new RuleError("Only the host can start the game.");
       if (this.game) throw new RuleError("The game has already started.");
-      if (!this.seats.every((_, i) => this.isConnected(i))) throw new RuleError("Three players are needed.");
-      this.game = newGame(this.randomInt);
+      if (!this.seats.every((_, i) => this.isConnected(i))) throw new RuleError(engine.startError);
+      this.game = engine.newGame(this.randomInt);
       this.publish();
       return;
     }
     if (!this.game) throw new RuleError("The game hasn't started.");
     if (this.paused) throw new RuleError("Waiting for a player to come back.");
 
-    switch (action.type) {
-      case "trump":
-        this.game = chooseTrump(this.game, seat, action.suit, this.randomInt);
-        break;
-      case "give":
-        this.game = giveCard(this.game, seat, action.card, this.randomInt);
-        break;
-      case "play":
-        this.game = playCard(this.game, seat, action.card);
-        break;
-      case "ready":
-        this.game = markReady(this.game, seat, this.randomInt);
-        break;
-    }
+    this.game = engine.act(this.game, seat, action as A, this.randomInt);
     this.publish();
   }
 

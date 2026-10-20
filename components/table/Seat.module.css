@@ -270,3 +270,23 @@
     max-width: 16ch;
   }
 }
+
+/* Two-player tables: the opponent sits across, nameplate and cards side by side. */
+.seat[data-position="top"] {
+  flex-direction: row;
+  justify-content: center;
+  gap: 14px;
+}
+
+.seat[data-position="top"] .fan {
+  --cw: 26px;
+  height: 44px;
+}
+
+.seat[data-position="top"] .mini {
+  margin-left: -15px;
+}
+
+.seat[data-position="top"] .mini:first-child {
+  margin-left: 0;
+}

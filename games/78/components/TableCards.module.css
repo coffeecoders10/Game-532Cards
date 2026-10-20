@@ -1,0 +1,136 @@
+.row {
+  --cw: clamp(42px, min(15.4vw, 9.2dvh), 92px);
+  --peek: calc(var(--cw) * 0.3);
+  display: flex;
+  justify-content: center;
+  gap: calc(var(--cw) * 0.12);
+  perspective: 900px;
+}
+
+.column {
+  position: relative;
+  flex: none;
+  width: var(--cw);
+  height: calc(var(--cw) * 1.4 + var(--peek));
+}
+
+/* An empty column keeps its outline so the layout never jumps. */
+.column[data-empty="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  border-radius: calc(var(--cw) * 0.07);
+  border: 1.5px dashed rgba(220, 176, 100, 0.22);
+}
+
+.row[data-side="mine"] .column[data-empty="true"]::before {
+  top: var(--peek);
+}
+
+.column > .down,
+.column > .up {
+  position: absolute;
+  left: 0;
+}
+
+.row[data-side="mine"] .column > .down,
+.row[data-side="theirs"] .column > .up {
+  top: 0;
+}
+
+.row[data-side="mine"] .column > .up,
+.row[data-side="theirs"] .column > .down {
+  top: var(--peek);
+}
+
+.column > .up {
+  z-index: 2;
+  animation: reveal 0.6s var(--ease-out) var(--delay) backwards;
+}
+
+.column > .down {
+  z-index: 1;
+  animation: dealDown 0.6s var(--ease-out) calc(var(--k) * 70ms) backwards;
+}
+
+/* The face-up card comes from beneath (or, at the deal, from the deck) and turns over as it lands. */
+@keyframes reveal {
+  from {
+    translate: 0 var(--from);
+    rotate: y 90deg;
+    opacity: 0.4;
+  }
+}
+
+@keyframes dealDown {
+  from {
+    translate: 0 -60dvh;
+    rotate: -20deg;
+    opacity: 0;
+    scale: 0.7;
+  }
+}
+
+/* Playable now: a lamp ring and a little lift. */
+.row .column > button.can,
+.row .column > button.can:hover {
+  box-shadow:
+    0 0 0 calc(var(--u) * 2) rgba(255, 220, 148, 0.85),
+    0 0 calc(var(--u) * 6) calc(var(--u) * 1) rgba(255, 220, 148, 0.3),
+    0 calc(var(--u) * 2) calc(var(--u) * 4) rgba(0, 0, 0, 0.4);
+}
+
+.row[data-side="mine"] .column > .can:not([aria-disabled="true"]),
+.row[data-side="theirs"] .column > .can:not([aria-disabled="true"]) {
+  translate: 0 -4px;
+}
+
+.row[data-side="theirs"] .column > .can:not([aria-disabled="true"]) {
+  translate: 0 4px;
+}
+
+/* The one picked, waiting to be confirmed. */
+.row .column > button.chosen,
+.row .column > button.chosen:hover {
+  box-shadow:
+    0 0 0 calc(var(--u) * 3.2) var(--lamp),
+    0 0 calc(var(--u) * 9) calc(var(--u) * 3) rgba(255, 220, 148, 0.6),
+    0 calc(var(--u) * 3) calc(var(--u) * 5) rgba(0, 0, 0, 0.45);
+}
+
+@media (hover: hover) {
+  .row[data-side="mine"] .column > .can:hover {
+    translate: 0 -10px;
+  }
+  .row[data-side="theirs"] .column > .can:hover {
+    translate: 0 10px;
+  }
+}
+
+.column > .can[aria-pressed],
+.column > .can:focus-visible {
+  z-index: 3;
+}
+
+/* The card an opponent's swap is aimed at. */
+.column[data-marked="true"]::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: -4px;
+  bottom: -4px;
+  z-index: 4;
+  border-radius: calc(var(--cw) * 0.1);
+  border: 2px dashed var(--warn);
+  pointer-events: none;
+  animation: markedPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes markedPulse {
+  50% {
+    opacity: 0.4;
+  }
+}

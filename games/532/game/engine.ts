@@ -6,6 +6,7 @@ import {
   sameCard,
   shuffle,
 } from "@/lib/cards/cards";
+import { fail } from "@/lib/cards/rules";
 import { buildDeck } from "./deck";
 
 /**
@@ -75,12 +76,6 @@ export interface Game {
   /** Rounds in which each seat reached their target. */
   made: number[];
   roundsPlayed: number;
-}
-
-export class RuleError extends Error {}
-
-function fail(message: string): never {
-  throw new RuleError(message);
 }
 
 const range3 = () => [0, 1, 2];

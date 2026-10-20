@@ -1,0 +1,174 @@
+.trick {
+  --cw: clamp(50px, min(16vw, 9.4dvh), 104px);
+  position: relative;
+  width: calc(var(--cw) * 2.9);
+  height: calc(var(--cw) * 1.6);
+  max-width: 100%;
+}
+
+/* Faint trump emblem printed on the felt */
+.mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--cw) * 1.9);
+  height: calc(var(--cw) * 1.9);
+  translate: -50% -50%;
+  color: var(--brass);
+  opacity: 0.09;
+  animation: stamp 0.9s var(--ease-out) backwards;
+  pointer-events: none;
+}
+
+.markRed {
+  color: #e0705f;
+}
+
+@keyframes stamp {
+  from {
+    scale: 1.8;
+    opacity: 0;
+    rotate: -12deg;
+  }
+}
+
+.slot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--cw);
+  margin: calc(var(--cw) * -0.7) 0 0 calc(var(--cw) * -0.5);
+  animation:
+    toss 0.55s var(--ease-out) backwards,
+    sweep 0.55s cubic-bezier(0.5, 0, 0.9, 0.4) 1.55s forwards;
+}
+
+.slot[data-order="0"] {
+  translate: calc(var(--cw) * -0.58) 0;
+  rotate: -4deg;
+}
+
+.slot[data-order="1"] {
+  translate: calc(var(--cw) * 0.58) 0;
+  rotate: 5deg;
+}
+
+.slot[data-from="mine"] {
+  --fy: 34dvh;
+}
+
+.slot[data-from="theirs"] {
+  --fy: -34dvh;
+}
+
+/* The sweep only runs once the hand is complete */
+.trick:not([data-done="true"]) .slot {
+  animation: toss 0.55s var(--ease-out) backwards;
+}
+
+.trick[data-winner="mine"] {
+  --ty: 34dvh;
+}
+
+.trick[data-winner="theirs"] {
+  --ty: -34dvh;
+}
+
+@keyframes toss {
+  from {
+    translate: calc(var(--cw) * 0.1) var(--fy);
+    rotate: 40deg;
+    scale: 0.8;
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+}
+
+@keyframes sweep {
+  to {
+    translate: 0 var(--ty);
+    rotate: 20deg;
+    scale: 0.5;
+    opacity: 0;
+  }
+}
+
+.slot[data-win="true"] .played {
+  animation: winPulse 0.9s var(--ease-spring) 0.5s both;
+}
+
+@keyframes winPulse {
+  to {
+    scale: 1.14;
+    box-shadow:
+      0 0 0 calc(var(--u) * 1.6) var(--lamp),
+      0 0 calc(var(--u) * 9) calc(var(--u) * 3) rgba(255, 220, 148, 0.7),
+      0 calc(var(--u) * 3) calc(var(--u) * 5) rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Sparks radiating from the winning card */
+.burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+}
+
+.burst i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3px;
+  border-radius: 50%;
+  background: var(--lamp);
+  box-shadow: 0 0 8px var(--lamp);
+  opacity: 0;
+  animation: spark 0.9s var(--ease-out) calc(0.5s + var(--s)) forwards;
+}
+
+@keyframes spark {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--a)) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(calc(var(--cw) * -0.95)) scale(0.2);
+  }
+}
+
+.award {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--cw) * -0.62);
+  translate: -50% 0;
+  padding: 5px 15px;
+  border-radius: 999px;
+  background: var(--lamp);
+  color: #2b1d0a;
+  font-family: var(--font-head);
+  font-size: 16px;
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  animation:
+    awardIn 0.5s var(--ease-spring) 0.45s backwards,
+    awardOut 0.3s ease-in 1.7s forwards;
+  z-index: 10;
+}
+
+@keyframes awardIn {
+  from {
+    opacity: 0;
+    scale: 0.6;
+    translate: -50% 12px;
+  }
+}
+
+@keyframes awardOut {
+  to {
+    opacity: 0;
+  }
+}

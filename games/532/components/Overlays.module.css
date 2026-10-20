@@ -41,59 +41,6 @@
   color: var(--text-dim);
 }
 
-/* ---------------------------------------------------------------- trump */
-
-.suits {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.suitButton {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 4px 10px;
-  border-radius: 14px;
-  border: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 700;
-  box-shadow: 0 4px 0 var(--paper-edge), 0 10px 18px rgba(0, 0, 0, 0.35);
-  transition:
-    translate 0.2s var(--ease-spring),
-    box-shadow 0.2s var(--ease-out);
-  animation: panelIn 0.5s var(--ease-spring) calc(var(--i) * 70ms + 150ms) backwards;
-}
-
-.suitButton[data-red="true"] {
-  color: var(--red);
-}
-
-.suitButton svg {
-  width: 34px;
-  height: 34px;
-}
-
-.suitButton:hover:not(:disabled),
-.suitButton:focus-visible {
-  translate: 0 -5px;
-  box-shadow: 0 9px 0 var(--paper-edge), 0 18px 26px rgba(0, 0, 0, 0.4);
-}
-
-.suitButton:active:not(:disabled) {
-  translate: 0 2px;
-  box-shadow: 0 2px 0 var(--paper-edge), 0 6px 10px rgba(0, 0, 0, 0.35);
-}
-
-.suitButton:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
 /* ------------------------------------------------------------- exchange */
 
 .swap {

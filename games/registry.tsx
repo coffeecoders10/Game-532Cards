@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Emblem532 } from "./532/components/Emblem532";
+import { Emblem78 } from "./78/components/Emblem78";
 
 export interface GameInfo {
   /** Route segment: the game lives at `/games/<slug>`. */
@@ -24,6 +25,13 @@ export const GAMES: GameInfo[] = [
     tagline: "Win what you promised, then trade for the rest.",
     facts: ["3 players", "Online"],
     emblem: <Emblem532 size="clamp(52px, 14vw, 68px)" />,
+  },
+  {
+    slug: "78",
+    title: "7-8",
+    tagline: "Win your number, and take the rest from the other side.",
+    facts: ["2 players", "Online"],
+    emblem: <Emblem78 size="clamp(52px, 14vw, 68px)" />,
   },
 ];
 

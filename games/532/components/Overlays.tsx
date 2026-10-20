@@ -1,38 +1,10 @@
-import { type Card, SUITS, SUIT_NAMES, type Suit, cardName } from "@/lib/cards/cards";
+import { type Card, cardName } from "@/lib/cards/cards";
 import type { GameView, TableView } from "@/games/532/game/view";
 import { PlayingCard } from "@/components/cards/PlayingCard";
-import { SuitIcon } from "@/components/cards/Suit";
 import styles from "./Overlays.module.css";
 
 const nameOf = (view: TableView, seat: number) => view.seats[seat].name ?? "Player";
 const youOr = (view: TableView, seat: number) => (seat === view.you ? "You" : nameOf(view, seat));
-
-// ------------------------------------------------------------------ trump
-
-export function TrumpPicker({ onPick, disabled }: { onPick(suit: Suit): void; disabled: boolean }) {
-  return (
-    <div className={styles.panel} role="dialog" aria-label="Choose the trump suit">
-      <h2 className={styles.title}>Pick trump</h2>
-      <p className={styles.hint}>You hold the 5, so you choose the suit that beats all others this round — and you lead.</p>
-      <div className={styles.suits}>
-        {SUITS.map((suit, i) => (
-          <button
-            key={suit}
-            type="button"
-            className={styles.suitButton}
-            data-red={suit === "H" || suit === "D"}
-            style={{ "--i": i } as React.CSSProperties}
-            disabled={disabled}
-            onClick={() => onPick(suit)}
-          >
-            <SuitIcon suit={suit} />
-            <span>{SUIT_NAMES[suit]}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // --------------------------------------------------------------- exchange
 

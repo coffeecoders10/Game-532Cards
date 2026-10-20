@@ -1,16 +1,11 @@
 import type { Card, Suit } from "@/lib/cards/cards";
+import type { SeatView, TableViewOf } from "@/lib/net/view";
 import type { ExchangeRight, Game, RoundSummary, Step, TrickPlay } from "./engine";
 
 /**
  * What one player is allowed to see. The host builds one of these per seat and sends it
  * encrypted to that seat only, so other players' hands and undealt cards never leave the host.
  */
-
-export interface SeatView {
-  /** null when the seat is empty. */
-  name: string | null;
-  connected: boolean;
-}
 
 export interface ExchangeView {
   taker: number;
@@ -51,16 +46,8 @@ export interface GameView {
   roundsPlayed: number;
 }
 
-export interface TableView {
-  /** Monotonic version so stale or replayed views are ignored. */
-  v: number;
-  code: string;
-  you: number;
-  seats: SeatView[];
-  game: GameView | null;
-  /** True while a seated player is away mid-game. */
-  paused: boolean;
-}
+export type { SeatView };
+export type TableView = TableViewOf<GameView>;
 
 export function gameViewFor(g: Game, seat: number): GameView {
   const exchange = g.step === "exchange" && g.owed.length > 0 ? g.owed[0] : null;

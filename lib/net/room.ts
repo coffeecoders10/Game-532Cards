@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
-import { SOCKET_PATH, SOCKET_URL, roomIdFor } from "./config";
-import { type Wire, parseWire } from "./protocol";
+import { SOCKET_PATH, SOCKET_URL } from "./config";
+import { type Wire, parseWire } from "./wire";
 
 export interface RoomHandlers {
   onConnect(): void;
@@ -22,9 +22,9 @@ export type RoomConnector = (handlers: RoomHandlers) => RoomLink;
 /**
  * Follows docs/sop-socket.md: websocket transport only, handlers registered before `join`,
  * and `join` re-sent on every (re)connect. The socket "username" is our per-tab player id.
+ * Room ids are shared with other projects, so each game namespaces its own (e.g. `532cards:ABC123`).
  */
-export function socketConnector(code: string, userId: string): RoomConnector {
-  const room_id = roomIdFor(code);
+export function socketConnector(room_id: string, userId: string): RoomConnector {
   return (handlers) => {
     const socket = io(SOCKET_URL, {
       path: SOCKET_PATH,

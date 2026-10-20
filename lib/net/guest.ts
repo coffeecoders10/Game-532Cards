@@ -1,8 +1,7 @@
-import type { TableView } from "../game/view";
 import { type Identity, deriveSharedKey, open, samePublicKey, seal } from "./crypto";
 import { cleanName } from "./names";
-import { type Action, type Wire, parseToGuest } from "./protocol";
 import type { RoomConnector, RoomLink } from "./room";
+import { type CommonAction, type Wire, parseToGuest } from "./wire";
 
 /** How a guest relates to the table, for the UI. */
 export type GuestStatus =
@@ -16,17 +15,17 @@ export type GuestStatus =
   | "closed" // the host ended the table
   | "left";
 
-export interface GuestCallbacks {
-  onView(view: TableView): void;
+export interface GuestCallbacks<V> {
+  onView(view: V): void;
   onStatus(status: GuestStatus): void;
   onNotice(message: string): void;
 }
 
-export interface GuestOptions {
+export interface GuestOptions<V> {
   identity: Identity;
   name: string;
   connect: RoomConnector;
-  callbacks: GuestCallbacks;
+  callbacks: GuestCallbacks<V>;
 }
 
 const HELLO_RETRY_MS = 2000;
@@ -39,7 +38,7 @@ const HELLO_ATTEMPTS = 5;
  * private view the host sends back. The first host to answer is pinned for the session,
  * so a later impostor in the room cannot take over.
  */
-export class GuestSession {
+export class GuestSession<V extends { v: number }, A> {
   private link: RoomLink | null = null;
   private host: { id: string; pk: JsonWebKey } | null = null;
   private hostKey: CryptoKey | null = null;
@@ -51,7 +50,7 @@ export class GuestSession {
   private retry: ReturnType<typeof setInterval> | null = null;
   private syncTimer: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private readonly opts: GuestOptions) {}
+  constructor(private readonly opts: GuestOptions<V>) {}
 
   start() {
     this.setStatus();
@@ -81,7 +80,7 @@ export class GuestSession {
     this.link = null;
   }
 
-  async act(action: Action) {
+  async act(action: A | CommonAction) {
     if (!this.hostKey || !this.host || !this.link) return;
     const box = await seal(this.hostKey, { k: "act", action });
     this.link?.send({ t: "box", from: this.opts.identity.id, to: this.host.id, ...box });
@@ -168,7 +167,7 @@ export class GuestSession {
 
   private async handleBox(box: Extract<Wire, { t: "box" }>) {
     if (!this.hostKey) return;
-    const message = parseToGuest(await open(this.hostKey, box));
+    const message = parseToGuest<V>(await open(this.hostKey, box));
     if (!message) return;
     if (message.k === "view") {
       // Equal versions are accepted: that is the host answering a sync with the same state.

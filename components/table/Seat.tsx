@@ -1,7 +1,7 @@
 import { PlayingCard } from "@/components/cards/PlayingCard";
 import styles from "./Seat.module.css";
 
-export type SeatPosition = "left" | "right" | "me";
+export type SeatPosition = "left" | "right" | "top" | "me";
 
 interface Props {
   position: SeatPosition;
@@ -15,6 +15,8 @@ interface Props {
   isTurn?: boolean;
   /** This seat just won the hand on the table. */
   isWinner?: boolean;
+  /** Back design for the opponent's fanned cards. */
+  back?: "lattice" | "rosette";
 }
 
 function Tally({ target, wins }: { target: number; wins: number }) {
@@ -48,6 +50,7 @@ export function Seat({
   handCount = 0,
   isTurn,
   isWinner,
+  back,
 }: Props) {
   const empty = name === null;
   return (
@@ -88,6 +91,7 @@ export function Seat({
             <PlayingCard
               key={i}
               faceDown
+              back={back}
               className={styles.mini}
               style={{ "--d": i - (handCount - 1) / 2, "--k": i } as React.CSSProperties}
             />

@@ -19,6 +19,8 @@ const PIPS: Record<number, [number, number][]> = {
 interface Props {
   card?: Card;
   faceDown?: boolean;
+  /** Back design for face-down cards: the plain lattice, or the ornamental rosette. */
+  back?: "lattice" | "rosette";
   /** Dimmed because it can't be played right now. */
   disabled?: boolean;
   selected?: boolean;
@@ -30,6 +32,53 @@ interface Props {
   style?: CSSProperties;
   onClick?: () => void;
   children?: ReactNode;
+}
+
+/**
+ * The rosette back: a brass medallion with an eight-point star, framed and cornered, drawn on a
+ * 100x140 grid so it is symmetrical top to bottom and left to right at any card size.
+ */
+function Rosette() {
+  return (
+    <svg className={styles.ornament} viewBox="0 0 100 140" aria-hidden="true">
+      <rect x="9" y="9" width="82" height="122" rx="4" className={styles.line} />
+      <rect x="12.5" y="12.5" width="75" height="115" rx="2.5" className={styles.hair} />
+      {[
+        "translate(12.5 12.5)",
+        "translate(87.5 12.5) scale(-1 1)",
+        "translate(12.5 127.5) scale(1 -1)",
+        "translate(87.5 127.5) scale(-1 -1)",
+      ].map((transform) => (
+        <g key={transform} transform={transform}>
+          <path d="M0 15 A15 15 0 0 0 15 0" className={styles.line} />
+          <path d="M0 9.5 A9.5 9.5 0 0 0 9.5 0" className={styles.hair} />
+          <circle cx="5.2" cy="5.2" r="1.7" className={styles.solid} />
+        </g>
+      ))}
+      {[0, 180].map((turn) => (
+        <g key={turn} transform={`rotate(${turn} 50 70)`}>
+          <path d="M50 43 V35.5" className={styles.hair} />
+          <path d="M50 22.5 L54.4 29 L50 35.5 L45.6 29 Z" className={styles.line} />
+          <circle cx="50" cy="29" r="1.3" className={styles.solid} />
+          <circle cx="50" cy="18" r="1.4" className={styles.solid} />
+          <path d="M23 70 H18.5" className={styles.hair} />
+          <path d="M18.5 70 L16.2 67 M18.5 70 L16.2 73" className={styles.hair} />
+        </g>
+      ))}
+      <g transform="translate(50 70)">
+        <circle r="27" className={styles.line} />
+        <circle r="24.6" className={styles.hair} />
+        <rect x="-15" y="-15" width="30" height="30" className={`${styles.line} ${styles.tint}`} />
+        <rect x="-15" y="-15" width="30" height="30" className={`${styles.line} ${styles.tint}`} transform="rotate(45)" />
+        {Array.from({ length: 8 }, (_, i) => (
+          <ellipse key={i} cx="0" cy="-19.5" rx="2.6" ry="5.2" className={styles.hair} transform={`rotate(${i * 45 + 22.5})`} />
+        ))}
+        <circle r="8.4" className={styles.solid} />
+        <circle r="5.6" className={styles.ground} />
+        <circle r="2.3" className={styles.solid} />
+      </g>
+    </svg>
+  );
 }
 
 function Face({ card }: { card: Card }) {
@@ -68,6 +117,7 @@ function Face({ card }: { card: Card }) {
 export function PlayingCard({
   card,
   faceDown,
+  back = "lattice",
   disabled,
   selected,
   fresh,
@@ -82,6 +132,7 @@ export function PlayingCard({
   const classes = [
     styles.card,
     up ? styles.face : styles.back,
+    !up && back === "rosette" ? styles.rosette : "",
     up && isRed(card.suit) ? styles.red : "",
     disabled ? styles.disabled : "",
     selected ? styles.selected : "",
@@ -92,7 +143,13 @@ export function PlayingCard({
   const label = up ? cardName(card) : "Face-down card";
   const content = (
     <>
-      {up ? <Face card={card} /> : <span className={styles.crest} aria-hidden="true" />}
+      {up ? (
+        <Face card={card} />
+      ) : (
+        <span className={styles.crest} aria-hidden="true">
+          {back === "rosette" && <Rosette />}
+        </span>
+      )}
       {children}
     </>
   );

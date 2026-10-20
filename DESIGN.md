@@ -83,6 +83,7 @@ All colours are CSS custom properties on `:root`. Use the tokens, never raw hex,
 - Ratio **5:7**. Size by setting `--cw` on the card or any ancestor; everything inside scales with it.
 - Paper face with ink/red pips and corner indices; a crest back for face-down cards.
 - Supports ranks **2 to Ace** and all four suits. Games that use a partial deck simply don't deal the others.
+- Face-down cards use `back="lattice"` (default) or `back="rosette"`, a symmetrical brass medallion with an eight-point star. 7-8 uses the rosette for every concealed card.
 - Props for state: `disabled` (can't play now), `selected`, `fresh` (just received), `trump`, `faceDown`.
 - Render as a `<button>` when interactive (pass `onClick`), a labelled `role="img"` otherwise. Every card has an accessible name ("Queen of Hearts").
 - Fans: cards overlap by ~42% of their width, rotate 7° per step from centre and drop on a parabola (`translate: 0 calc(var(--d) * var(--d) * 3px)`).
@@ -177,6 +178,9 @@ Shared, game-agnostic building blocks. Use these before writing new CSS.
 | `RulesDialog` | `components/ui/` | Native `<dialog>` rules sheet; game supplies title and an `<ol>` |
 | `StatusScreen` | `components/ui/` | Full-screen message with optional back button |
 | `Hub`, `GameTile` | `components/hub/` | Landing page and per-game tiles |
+| `TableShell`, `TrumpChip` | `components/table/` | Felt, rail, header (wordmark, state, Rules, Leave) and alerts for any table |
+| `Seat`, `Lobby`, `TrumpPicker` | `components/table/` | Nameplate (positions left, right, top, me), waiting room, trump chooser |
+| `GameHome`, `RoomClient`, `NameGate` | `components/table/` | Shared landing page and room route for multiplayer games |
 
 Shared logic lives in `lib/`: `lib/cards/cards.ts` (suits, ranks, names, shuffle, sort) and `lib/hooks/useClientValue.ts` (hydration-safe browser values).
 
@@ -214,7 +218,7 @@ Things the first game hasn't needed. Decide and record them here when a game doe
 
 - Spectator and rejoin states in the lobby
 - Scoreboards and end-of-game summaries as a shared component
-- Games for 2 or 4+ players (seat layouts around the table)
+- Games for 4+ players (2-player layout is 7-8: opponent across the table, their cards above, yours below)
 - Single-player or bot opponents
 - Sound and haptics
 - Light theme (the product is deliberately dark-felt only for now)

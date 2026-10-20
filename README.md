@@ -1,6 +1,6 @@
 # CC Card Games
 
-A hub of playing-card games for the browser. Currently: **5-3-2**, a three-player, turn-based trick-taking game. The shared look and feel, and how to add a game, are in [DESIGN.md](DESIGN.md).
+A hub of playing-card games for the browser. Currently: **5-3-2**, a three-player trick-taking game, and **7-8**, a two-player one. The shared look and feel, and how to add a game, are in [DESIGN.md](DESIGN.md).
 
 Built with Next.js (App Router), plain CSS Modules, and the shared Socket.IO room service described in [docs/sop-socket.md](docs/sop-socket.md).
 
@@ -20,6 +20,15 @@ Pick 5-3-2 on the hub, open a table, send the six-character code (or the invite 
 3. The 5 leads. Follow suit if you can; highest trump wins, otherwise highest card of the led suit. The winner leads next.
 4. After the round the targets rotate: 5 becomes 2, 3 becomes 5, 2 becomes 3. Rounds continue until you stop.
 
+## How 7-8 plays
+
+Same 30-card deck, two players, fixed roles: the **8** wants 8 of the 15 hands, the **7** wants 7.
+
+1. Each player gets 5 cards in hand; the 8 picks trump, then everyone gets five face-down cards with a face-up card on top of each.
+2. Play from your hand or any face-up table card; playing a table card flips the card beneath. Follow suit across both. The 8 leads the first hand, winners lead after.
+3. Win more than your number and you owe the difference: next deal the other player gets one swap per hand owed, taking either a chosen face-up card or a random hand card, and giving one of their own back.
+4. Deals continue until players leave.
+
 ## Code layout
 
 | Path | What it is |
@@ -27,7 +36,10 @@ Pick 5-3-2 on the hub, open a table, send the six-character code (or the invite 
 | `app/` | Routes: `/` (the hub), `/games/532` (5-3-2 landing) and `/games/532/room/[code]` (a table). |
 | `games/registry.tsx` | The list of games shown on the hub. Add an entry to add a tile. |
 | `games/532/game/` | Pure 5-3-2 rules (`engine.ts`), deck (`deck.ts`), and the per-player view projection (`view.ts`). No React, no networking. |
-| `games/532/net/` | Networking on top of the socket service: `host.ts`, `guest.ts`, `crypto.ts`, `room.ts` (Socket.IO transport), `protocol.ts`, and the `useTable` hook. |
+| `games/532/net/`, `games/78/net/` | Each game's actions (`protocol.ts`) and its adapter (`table.ts`) that plugs its rules into the shared sessions. |
+| `games/78/` | 7-8: same layout as 5-3-2 (`game/` rules and view, `net/`, `components/`). |
+| `lib/net/` | Shared multiplayer: `host.ts` and `guest.ts` sessions, `crypto.ts`, `room.ts` (Socket.IO transport), `wire.ts`, `storage.ts` and the `useTable` hook. |
+| `components/table/` | Shared table pieces: `TableShell`, `Seat`, `Lobby`, `TrumpPicker`, `GameHome`, `RoomClient`, `NameGate`. |
 | `games/532/components/` | The 5-3-2 table UI: `Table`, `Hand`, `Seat`, `TrickArea`, `Overlays`, `Lobby`, the landing page and rules. |
 | `components/ui/` | Shared building blocks every game uses: `GameLanding`, `Panel`, `Button`, `TextField`, `RulesDialog`, `StatusScreen`... |
 | `components/cards/` | `PlayingCard` and suit icons, shared by all games. |
@@ -38,7 +50,7 @@ Pick 5-3-2 on the hub, open a table, send the six-character code (or the invite 
 
 The socket service is a plain broadcast relay: it has no game logic, no authentication, and every message reaches everyone in the room. So:
 
-- **The host's browser is the game server.** It runs `games/532/game/engine.ts`, holds the only copy of the full state (including the undealt cards), and validates every action: whose turn it is, follow-suit, trump, exchanges. Guests only send intents (`play`, `trump`, `give`, `ready`) and render the view they receive.
+- **The host's browser is the game server.** It runs the game's engine (`games/<slug>/game/engine.ts`), holds the only copy of the full state (including the undealt cards), and validates every action: whose turn it is, follow-suit, trump, exchanges. Guests only send intents (`play`, `trump`, `give`, `ready`) and render the view they receive.
 - **Hands are private.** Each guest and the host agree a key with ECDH (P-256) and every message that carries a view or an action is sealed with AES-GCM. Anyone else in the room, including someone who guesses the room code, sees only ciphertext. A forged action fails to decrypt, so it can't impersonate a player. The first host a guest hears from is pinned for that session.
 - **Random draws** for exchanges use `crypto.getRandomValues` on the host; the drawn card is revealed only to the player who earned the exchange.
 - **Disconnects.** The host watches the room's `status` events. If a seated player drops mid-game the table pauses; they rejoin by reopening the link (same tab keeps the seat, a new tab can take over a vacant one). Before the game starts a departing player simply frees their seat. If the host drops, guests see a banner and the game resumes when the host reloads (the host's table state is kept in `sessionStorage`). "Leave" by the host ends the table for everyone.

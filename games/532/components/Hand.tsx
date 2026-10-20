@@ -1,8 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
 import { type Card, type Suit, cardKey, sortHand } from "@/lib/cards/cards";
 import { PlayingCard } from "@/components/cards/PlayingCard";
+import { useFlip } from "@/lib/hooks/useFlip";
 import { useMediaQuery } from "@/lib/hooks/useClientValue";
 import styles from "./Hand.module.css";
 
@@ -14,32 +15,6 @@ interface Props {
   /** Card to glow as newly received. */
   freshKey: string | null;
   onChoose(card: Card): void;
-}
-
-/** Slides cards to their new slot when the hand is re-sorted, dealt into, or thinned out. */
-function useFlip(ref: React.RefObject<HTMLDivElement | null>) {
-  const previous = useRef(new Map<string, [number, number]>());
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const next = new Map<string, [number, number]>();
-    for (const child of Array.from(el.children) as HTMLElement[]) {
-      const key = child.dataset.key;
-      if (!key) continue;
-      // Layout position (not the transformed one) so the deal-in animation can't skew it.
-      const pos: [number, number] = [child.offsetLeft, child.offsetTop];
-      next.set(key, pos);
-      const old = previous.current.get(key);
-      if (old && !reduce && (old[0] !== pos[0] || old[1] !== pos[1])) {
-        child.animate(
-          [{ transform: `translate(${old[0] - pos[0]}px, ${old[1] - pos[1]}px)` }, { transform: "none" }],
-          { duration: 380, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-        );
-      }
-    }
-    previous.current = next;
-  });
 }
 
 export function Hand({ cards, trump, choosable, freshKey, onChoose }: Props) {

@@ -1,0 +1,127 @@
+/* The frosted panel that sits on the felt for lobby, trump picker and summaries, with its buttons. */
+.panel {
+  width: min(92vw, 420px);
+  padding: 20px 22px 22px;
+  border-radius: 22px;
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  animation: panelIn 0.5s var(--ease-out) backwards;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+    scale: 0.96;
+  }
+}
+
+.title {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.hint {
+  color: var(--text-dim);
+  font-size: 14.5px;
+  max-width: 34ch;
+  margin: 0 auto;
+}
+
+.fine {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ---------------------------------------------------------------- trump */
+
+.suits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.suitButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 4px 10px;
+  border-radius: 14px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 0 var(--paper-edge), 0 10px 18px rgba(0, 0, 0, 0.35);
+  transition:
+    translate 0.2s var(--ease-spring),
+    box-shadow 0.2s var(--ease-out);
+  animation: panelIn 0.5s var(--ease-spring) calc(var(--i) * 70ms + 150ms) backwards;
+}
+
+.suitButton[data-red="true"] {
+  color: var(--red);
+}
+
+.suitButton svg {
+  width: 34px;
+  height: 34px;
+}
+
+.suitButton:hover:not(:disabled),
+.suitButton:focus-visible {
+  translate: 0 -5px;
+  box-shadow: 0 9px 0 var(--paper-edge), 0 18px 26px rgba(0, 0, 0, 0.4);
+}
+
+.suitButton:active:not(:disabled) {
+  translate: 0 2px;
+  box-shadow: 0 2px 0 var(--paper-edge), 0 6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.suitButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.primary {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--lamp);
+  color: #2b1d0a;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 4px 0 #b88a3a, 0 10px 20px rgba(0, 0, 0, 0.35);
+  transition:
+    translate 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out),
+    opacity 0.2s;
+}
+
+.primary:hover:not(:disabled) {
+  translate: 0 -2px;
+}
+
+.primary:active:not(:disabled) {
+  translate: 0 3px;
+  box-shadow: 0 1px 0 #b88a3a, 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { type Card, SUIT_NAMES, cardKey } from "@/lib/cards/cards";
 import { legalCards } from "@/games/532/game/engine";
 import type { GameView, TableView } from "@/games/532/game/view";
 import type { Action } from "@/games/532/net/protocol";
 import type { Notice, TableStatus } from "@/games/532/net/useTable";
 import { Hand } from "./Hand";
-import { Lobby } from "./Lobby";
-import { ExchangeStage, RoundIntro, RoundSummary, SwapToast, TrumpPicker } from "./Overlays";
-import { RulesDialog } from "@/components/ui/RulesDialog";
+import { Lobby } from "@/components/table/Lobby";
+import { ExchangeStage, RoundIntro, RoundSummary, SwapToast } from "./Overlays";
+import { TrumpPicker } from "@/components/table/TrumpPicker";
+import { TableShell, TrumpChip } from "@/components/table/TableShell";
 import { Rules532 } from "./Rules532";
-import { Seat } from "./Seat";
-import { SuitIcon } from "@/components/cards/Suit";
+import { Seat } from "@/components/table/Seat";
 import { TrickArea } from "./TrickArea";
 import styles from "./Table.module.css";
 
@@ -57,8 +57,6 @@ function statusLine(view: TableView, game: GameView | null): string {
 export function Table({ view, status, notice, busy, isHost, act, onLeave }: Props) {
   const game = view.game;
   const you = view.you;
-  const rulesRef = useRef<HTMLDialogElement>(null);
-  const [confirmLeave, setConfirmLeave] = useState(false);
   const [lastSwapSeen, setLastSwapSeen] = useState<number | null>(null);
   const [swapToastOn, setSwapToastOn] = useState(false);
 
@@ -99,15 +97,6 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Prop
     act({ type: myExchange ? "give" : "play", card });
   };
 
-  const handleLeave = () => {
-    if (!confirmLeave) {
-      setConfirmLeave(true);
-      setTimeout(() => setConfirmLeave(false), 3000);
-      return;
-    }
-    onLeave();
-  };
-
   const awayNames = view.seats
     .map((s, i) => (!s.connected && i !== you ? (s.name ?? "A player") : null))
     .filter(Boolean);
@@ -130,32 +119,33 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Prop
 
   const line = view.paused ? "" : statusLine(view, game);
 
-  return (
-    <div className={styles.room}>
-      <header className={styles.top}>
-        <h1 className={styles.logo} aria-label="5-3-2">
-          5·3·2
-        </h1>
-        {game && (
-          <div className={styles.meta}>
-            <span>Round {game.round}</span>
-            {game.trump && (
-              <span className={styles.trump} data-red={game.trump === "H" || game.trump === "D"} key={game.trump}>
-                <SuitIcon suit={game.trump} /> Trump
-              </span>
-            )}
-          </div>
-        )}
-        <div className={styles.tools}>
-          <button type="button" className={styles.tool} onClick={() => rulesRef.current?.showModal()}>
-            Rules
-          </button>
-          <button type="button" className={styles.tool} data-danger={confirmLeave} onClick={handleLeave}>
-            {confirmLeave ? "Leave table?" : "Leave"}
-          </button>
-        </div>
-      </header>
+  const alert =
+    status === "offline"
+      ? "Connection lost. Reconnecting…"
+      : status === "host-away"
+        ? "The host dropped off. Waiting for them to come back…"
+        : view.paused
+          ? `Paused — waiting for ${awayNames.join(" and ") || "a player"} to rejoin`
+          : null;
 
+  return (
+    <TableShell
+      name="5-3-2"
+      logo="5·3·2"
+      meta={
+        game && (
+          <>
+            <span>Round {game.round}</span>
+            {game.trump && <TrumpChip suit={game.trump} />}
+          </>
+        )
+      }
+      rulesTitle="How 5-3-2 plays"
+      rules={<Rules532 />}
+      alert={alert}
+      notice={notice}
+      onLeave={onLeave}
+    >
       <main className={styles.board}>
         <div className={styles.opp} data-side="left">
           {plate(leftSeat, "left")}
@@ -165,7 +155,7 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Prop
         </div>
 
         <div className={styles.center}>
-          {!game && <Lobby view={view} isHost={isHost} disabled={busy || view.paused} onStart={() => act({ type: "start" })} />}
+          {!game && <Lobby view={view} slug="532" title="5-3-2" isHost={isHost} disabled={busy || view.paused} onStart={() => act({ type: "start" })} />}
 
           {game && game.step === "trump" && (
             <>
@@ -174,7 +164,11 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Prop
               </div>
               {iPickTrump && (
                 <div className={styles.delayed}>
-                  <TrumpPicker disabled={busy} onPick={(suit) => act({ type: "trump", suit })} />
+                  <TrumpPicker
+                    hint="You hold the 5, so you choose the suit that beats all others this round — and you lead."
+                    disabled={busy}
+                    onPick={(suit) => act({ type: "trump", suit })}
+                  />
                 </div>
               )}
             </>
@@ -213,25 +207,6 @@ export function Table({ view, status, notice, busy, isHost, act, onLeave }: Prop
         )}
         <div className={styles.myPlate}>{plate(you, "me")}</div>
       </footer>
-
-      {(view.paused || status === "offline" || status === "host-away") && (
-        <div className={styles.alert} role="alert">
-          {status === "offline"
-            ? "Connection lost. Reconnecting…"
-            : status === "host-away"
-              ? "The host dropped off. Waiting for them to come back…"
-              : `Paused — waiting for ${awayNames.join(" and ") || "a player"} to rejoin`}
-        </div>
-      )}
-      {notice && (
-        <div className={styles.notice} role="status" key={notice.id}>
-          {notice.message}
-        </div>
-      )}
-
-      <RulesDialog dialogRef={rulesRef} title="How 5-3-2 plays">
-        <Rules532 />
-      </RulesDialog>
-    </div>
+    </TableShell>
   );
 }
