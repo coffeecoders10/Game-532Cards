@@ -17,12 +17,13 @@
   padding: 0 14px;
   border-radius: 12px;
   border: 1px solid var(--panel-line);
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s;
   font-size: 17px;
 }
 
 .input::placeholder {
-  color: rgba(244, 236, 216, 0.4);
+  color: rgba(240, 231, 218, 0.38);
 }
 
 .code {
@@ -35,4 +36,14 @@
 
 .code::placeholder {
   letter-spacing: 0.22em;
+}
+
+.input:hover {
+  border-color: rgba(240, 228, 210, 0.2);
+}
+
+.input:focus-visible {
+  border-color: var(--crema);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(226, 176, 114, 0.18);
 }

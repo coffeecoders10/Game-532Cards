@@ -6,7 +6,7 @@
   gap: 12px;
   padding: 24px;
   text-align: center;
-  background: radial-gradient(ellipse 80% 60% at 50% 40%, var(--felt-hi), var(--felt-mid) 50%, var(--felt-lo));
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, var(--roast-hi), var(--roast-mid) 55%, var(--roast-lo));
 }
 
 .shuffle {

@@ -1,14 +1,11 @@
-/* The frosted panel that sits on the felt for lobby, trump picker and summaries, with its buttons. */
+/* The panel that sits on the table for lobby, trump picker and summaries, with its buttons. */
 .panel {
   width: min(92vw, 420px);
   padding: 20px 22px 22px;
-  border-radius: 22px;
+  border-radius: 16px;
   background: var(--panel);
   border: 1px solid var(--panel-line);
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   text-align: center;
   animation: panelIn 0.5s var(--ease-out) backwards;
 }
@@ -26,6 +23,7 @@
   font-weight: 400;
   font-size: 26px;
   line-height: 1.1;
+  letter-spacing: -0.02em;
   margin-bottom: 6px;
 }
 
@@ -57,13 +55,13 @@
   align-items: center;
   gap: 6px;
   padding: 12px 4px 10px;
-  border-radius: 14px;
+  border-radius: 12px;
   border: 0;
   background: var(--paper);
   color: var(--ink);
   font-size: 12px;
-  font-weight: 700;
-  box-shadow: 0 4px 0 var(--paper-edge), 0 10px 18px rgba(0, 0, 0, 0.35);
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.38);
   transition:
     translate 0.2s var(--ease-spring),
     box-shadow 0.2s var(--ease-out);
@@ -82,12 +80,13 @@
 .suitButton:hover:not(:disabled),
 .suitButton:focus-visible {
   translate: 0 -5px;
-  box-shadow: 0 9px 0 var(--paper-edge), 0 18px 26px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 0 0 2px var(--crema),
+    0 14px 24px rgba(0, 0, 0, 0.45);
 }
 
 .suitButton:active:not(:disabled) {
-  translate: 0 2px;
-  box-shadow: 0 2px 0 var(--paper-edge), 0 6px 10px rgba(0, 0, 0, 0.35);
+  translate: 0 1px;
 }
 
 .suitButton:disabled {
@@ -100,28 +99,29 @@
   min-height: 48px;
   padding: 0 22px;
   border: 0;
-  border-radius: 14px;
-  background: var(--lamp);
-  color: #2b1d0a;
-  font-weight: 800;
+  border-radius: 12px;
+  background: var(--crema);
+  color: var(--on-crema);
+  font-weight: 700;
   font-size: 16px;
-  box-shadow: 0 4px 0 #b88a3a, 0 10px 20px rgba(0, 0, 0, 0.35);
   transition:
     translate 0.15s var(--ease-out),
-    box-shadow 0.15s var(--ease-out),
+    scale 0.15s var(--ease-out),
+    background 0.2s,
     opacity 0.2s;
 }
 
 .primary:hover:not(:disabled) {
   translate: 0 -2px;
+  background: #eec088;
 }
 
 .primary:active:not(:disabled) {
-  translate: 0 3px;
-  box-shadow: 0 1px 0 #b88a3a, 0 4px 10px rgba(0, 0, 0, 0.35);
+  translate: 0 1px;
+  scale: 0.98;
 }
 
 .primary:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: default;
 }

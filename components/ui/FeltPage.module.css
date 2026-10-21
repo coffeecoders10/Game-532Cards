@@ -1,8 +1,25 @@
+/* Espresso ground: a warm pool of light high in the frame and a cup-ring left on the table. */
 .page {
+  position: relative;
+  isolation: isolate;
   min-height: 100dvh;
   padding: calc(env(safe-area-inset-top) + 28px) 20px calc(env(safe-area-inset-bottom) + 28px);
   background:
-    radial-gradient(ellipse 60% 46% at 50% 28%, rgba(255, 220, 148, 0.16), transparent 70%),
-    radial-gradient(ellipse 90% 80% at 50% 40%, var(--felt-hi), var(--felt-mid) 48%, var(--felt-lo));
+    radial-gradient(ellipse 70% 50% at 50% 18%, rgba(226, 176, 114, 0.09), transparent 70%),
+    radial-gradient(ellipse 100% 90% at 50% 30%, var(--roast-hi), var(--roast-mid) 52%, var(--roast-lo));
   overflow: hidden;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -120px;
+  bottom: -90px;
+  width: 460px;
+  aspect-ratio: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, transparent 61%, rgba(226, 176, 114, 0.055) 62%, rgba(226, 176, 114, 0.085) 64%, transparent 65.5%),
+    radial-gradient(circle at 46% 52%, transparent 58%, rgba(226, 176, 114, 0.035) 59.5%, transparent 62%);
 }

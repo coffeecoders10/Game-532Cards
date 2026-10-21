@@ -50,8 +50,8 @@
 }
 
 .line[data-active="true"] {
-  color: #2b1d0a;
-  background: var(--lamp);
+  color: var(--on-crema);
+  background: var(--crema);
   animation: nudge 0.6s var(--ease-spring);
 }
 
@@ -82,7 +82,7 @@
 }
 
 .overlay[data-dim] {
-  background: rgba(6, 22, 21, 0.62);
+  background: rgba(8, 5, 4, 0.7);
   border-radius: 16px;
   animation: dimIn 0.4s var(--ease-out) backwards;
 }

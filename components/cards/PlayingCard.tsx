@@ -35,48 +35,68 @@ interface Props {
 }
 
 /**
- * The rosette back: a brass medallion with an eight-point star, framed and cornered, drawn on a
- * 100x140 grid so it is symmetrical top to bottom and left to right at any card size.
+ * Card backs are flat vector posters on a 100x140 grid, in four roast tones and nothing else: no
+ * gradients, no texture. Both are mirrored left-right and top-bottom, so they read the same whichever
+ * way up the card lies. `Sunrise` is the standard back; `Diamond` is the alternate.
  */
-function Rosette() {
+const MIRRORS = ["", "translate(100 0) scale(-1 1)", "translate(0 140) scale(1 -1)", "translate(100 140) scale(-1 -1)"];
+
+/** A flat bean: an oval and its crease, centred on (x, y). `tone` is the body, `cut` the crease. */
+function PosterBean({ x, y, turn, size = 1, tone, cut }: { x: number; y: number; turn: number; size?: number; tone: string; cut: string }) {
   return (
-    <svg className={styles.ornament} viewBox="0 0 100 140" aria-hidden="true">
-      <rect x="9" y="9" width="82" height="122" rx="4" className={styles.line} />
-      <rect x="12.5" y="12.5" width="75" height="115" rx="2.5" className={styles.hair} />
-      {[
-        "translate(12.5 12.5)",
-        "translate(87.5 12.5) scale(-1 1)",
-        "translate(12.5 127.5) scale(1 -1)",
-        "translate(87.5 127.5) scale(-1 -1)",
-      ].map((transform) => (
+    <g transform={`translate(${x} ${y}) rotate(${turn}) scale(${size})`}>
+      <ellipse rx="3.4" ry="5" className={tone} />
+      <path d="M0 -4.2C-2.2 -1.6 2.2 1.2 0 4.2" className={cut} />
+    </g>
+  );
+}
+
+function Sunrise() {
+  return (
+    <svg className={styles.poster} viewBox="0 0 100 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="100" height="140" className={styles.pBase} />
+      {MIRRORS.map((transform) => (
         <g key={transform} transform={transform}>
-          <path d="M0 15 A15 15 0 0 0 15 0" className={styles.line} />
-          <path d="M0 9.5 A9.5 9.5 0 0 0 9.5 0" className={styles.hair} />
-          <circle cx="5.2" cy="5.2" r="1.7" className={styles.solid} />
+          <circle r="34" className={styles.pDeep} />
+          <circle r="23" className={styles.pMid} />
+          <circle r="12" className={styles.pCaramel} />
+          <circle r="4" className={styles.pBase} />
         </g>
       ))}
-      {[0, 180].map((turn) => (
-        <g key={turn} transform={`rotate(${turn} 50 70)`}>
-          <path d="M50 43 V35.5" className={styles.hair} />
-          <path d="M50 22.5 L54.4 29 L50 35.5 L45.6 29 Z" className={styles.line} />
-          <circle cx="50" cy="29" r="1.3" className={styles.solid} />
-          <circle cx="50" cy="18" r="1.4" className={styles.solid} />
-          <path d="M23 70 H18.5" className={styles.hair} />
-          <path d="M18.5 70 L16.2 67 M18.5 70 L16.2 73" className={styles.hair} />
+      <circle cx="50" cy="70" r="31" className={styles.pCrema} />
+      {[5, 11, 18].map((y, i) =>
+        [-1, 1].map((side) => (
+          <rect key={`${y}${side}`} x="16" width="68" height={2 + i * 1.5} y={side > 0 ? 70 + y : 70 - y - (2 + i * 1.5)} className={styles.pBase} />
+        )),
+      )}
+      <circle cx="50" cy="70" r="36" className={styles.pHair} />
+      {[[50, 24, 0], [50, 116, 0], [10, 70, 90], [90, 70, 90]].map(([x, y, turn]) => (
+        <PosterBean key={`${x}${y}`} x={x} y={y} turn={turn} tone={styles.pCrema} cut={styles.pCutDark} />
+      ))}
+      <PosterBean x={50} y={70} turn={90} size={1.55} tone={styles.pBase} cut={styles.pCutLight} />
+    </svg>
+  );
+}
+
+function Diamond() {
+  return (
+    <svg className={styles.poster} viewBox="0 0 100 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="100" height="140" className={styles.pBase} />
+      {MIRRORS.map((transform) => (
+        <g key={transform} transform={transform}>
+          <path d="M0 0H44L0 44Z" className={styles.pDeep} />
+          <path d="M0 0H30L0 30Z" className={styles.pMid} />
+          <path d="M0 0H16L0 16Z" className={styles.pCaramel} />
         </g>
       ))}
-      <g transform="translate(50 70)">
-        <circle r="27" className={styles.line} />
-        <circle r="24.6" className={styles.hair} />
-        <rect x="-15" y="-15" width="30" height="30" className={`${styles.line} ${styles.tint}`} />
-        <rect x="-15" y="-15" width="30" height="30" className={`${styles.line} ${styles.tint}`} transform="rotate(45)" />
-        {Array.from({ length: 8 }, (_, i) => (
-          <ellipse key={i} cx="0" cy="-19.5" rx="2.6" ry="5.2" className={styles.hair} transform={`rotate(${i * 45 + 22.5})`} />
-        ))}
-        <circle r="8.4" className={styles.solid} />
-        <circle r="5.6" className={styles.ground} />
-        <circle r="2.3" className={styles.solid} />
-      </g>
+      <path d="M50 22 L82 70 L50 118 L18 70Z" className={styles.pCaramel} />
+      <path d="M50 32 L74 70 L50 108 L26 70Z" className={styles.pBase} />
+      <path d="M50 42 L66 70 L50 98 L34 70Z" className={styles.pMid} />
+      <circle cx="50" cy="70" r="12" className={styles.pCrema} />
+      <PosterBean x={50} y={70} turn={28} size={1.45} tone={styles.pBase} cut={styles.pCutLight} />
+      {[[50, 12], [50, 128], [12, 70], [88, 70]].map(([x, y]) => (
+        <PosterBean key={`${x}${y}`} x={x} y={y} turn={x === 50 ? 0 : 90} size={0.75} tone={styles.pCrema} cut={styles.pCutDark} />
+      ))}
     </svg>
   );
 }
@@ -147,7 +167,7 @@ export function PlayingCard({
         <Face card={card} />
       ) : (
         <span className={styles.crest} aria-hidden="true">
-          {back === "rosette" && <Rosette />}
+          {back === "rosette" ? <Diamond /> : <Sunrise />}
         </span>
       )}
       {children}

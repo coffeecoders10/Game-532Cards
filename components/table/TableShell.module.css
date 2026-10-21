@@ -1,4 +1,4 @@
-/* The table every game sits at: felt with lamp light, leather rail, header and floating alerts. */
+/* The table every game sits at: dark roast with a pool of lamp light, a cup-ring, header and floating alerts. */
 .room {
   position: relative;
   display: grid;
@@ -6,11 +6,10 @@
   height: 100dvh;
   overflow: hidden;
   isolation: isolate;
-  background:
-    radial-gradient(ellipse 85% 70% at 50% 42%, var(--felt-hi) 0%, var(--felt-mid) 48%, var(--felt-lo) 100%);
+  background: radial-gradient(ellipse 85% 70% at 50% 42%, var(--roast-hi) 0%, var(--roast-mid) 52%, var(--roast-lo) 100%);
 }
 
-/* Lamp light over the middle of the table, plus a soft cloth grain. */
+/* Lamp light over the middle of the table, and the ring a cup left behind. */
 .room::before {
   content: "";
   position: absolute;
@@ -18,24 +17,19 @@
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 60% 46% at 50% 40%, rgba(255, 220, 148, 0.14), transparent 70%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
-  opacity: 1;
-  mix-blend-mode: soft-light;
+    radial-gradient(circle at 50% 42%, transparent min(15.5vmin, 150px), rgba(226, 176, 114, 0.05) min(15.9vmin, 154px), rgba(226, 176, 114, 0.08) min(17.1vmin, 164px), transparent min(17.6vmin, 168px)),
+    radial-gradient(circle at 49% 43%, transparent min(14.2vmin, 138px), rgba(226, 176, 114, 0.03) min(15.2vmin, 148px), transparent min(16vmin, 156px)),
+    radial-gradient(ellipse 60% 46% at 50% 40%, rgba(226, 176, 114, 0.07), transparent 70%);
 }
 
-/* Padded leather rail around the cloth */
+/* A soft vignette pulls the eye to the middle of the table. */
 .room::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 5;
   pointer-events: none;
-  box-shadow:
-    inset 0 0 0 7px var(--rail),
-    inset 0 0 0 9px var(--rail-hi),
-    inset 0 0 0 10px rgba(0, 0, 0, 0.5),
-    inset 0 0 140px rgba(0, 0, 0, 0.55);
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.55);
 }
 
 /* ------------------------------------------------------------------ top */
@@ -53,9 +47,9 @@
 .logo {
   font-family: var(--font-head);
   font-weight: 400;
-  font-size: 24px;
-  letter-spacing: 0.04em;
-  color: var(--lamp);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 .meta {
@@ -63,7 +57,7 @@
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-dim);
 }
 
@@ -105,16 +99,17 @@
   padding: 0 14px;
   border-radius: 999px;
   border: 1px solid var(--panel-line);
-  background: var(--panel);
+  background: transparent;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   transition:
     background 0.2s,
     border-color 0.2s;
 }
 
 .tool:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(240, 228, 210, 0.07);
+  border-color: rgba(240, 228, 210, 0.2);
 }
 
 .tool[data-danger="true"] {
@@ -125,7 +120,6 @@
 
 /* ------------------------------------------------------------ alerts */
 
-.alert,
 .notice {
   position: absolute;
   left: 50%;
@@ -135,21 +129,43 @@
   padding: 9px 18px;
   border-radius: 14px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.alert {
-  top: 68px;
+/* Connection trouble is a small amber dot beside Rules, not a banner. Hover or focus for the words. */
+.status {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 34px;
+  cursor: help;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: var(--warn);
-  color: #2b1605;
+  animation: statusPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(235, 160, 98, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(235, 160, 98, 0);
+  }
 }
 
 .notice {
   top: 112px;
-  background: var(--paper);
-  color: var(--ink);
+  background: #2a2019;
+  color: var(--text);
+  border: 1px solid rgba(226, 176, 114, 0.35);
   animation: noticeIn 0.4s var(--ease-spring) backwards;
 }
 

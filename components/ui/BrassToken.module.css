@@ -1,16 +1,18 @@
+/* A coaster seen from above: dark disc, crema ring, numeral in crema. */
 .token {
   display: grid;
   place-items: center;
   width: var(--token, 96px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 28%, #f8e2ab, var(--brass) 52%, #a37b36);
-  border: calc(var(--token, 96px) * 0.05) solid #5a4220;
-  color: #2b1d0a;
+  background: radial-gradient(circle at 50% 38%, #271c16, #130d0a);
+  color: var(--crema);
   font-family: var(--font-head);
-  font-size: calc(var(--token, 96px) * 0.6);
+  font-size: calc(var(--token, 96px) * 0.5);
   line-height: 1;
   box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.45),
-    inset 0 -6px 12px rgba(90, 66, 32, 0.35);
+    inset 0 0 0 calc(var(--token, 96px) * 0.028) var(--crema),
+    inset 0 0 0 calc(var(--token, 96px) * 0.075) #130d0a,
+    inset 0 0 0 calc(var(--token, 96px) * 0.088) rgba(226, 176, 114, 0.32),
+    0 12px 26px rgba(0, 0, 0, 0.5);
 }

@@ -1,4 +1,6 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
+import { PlayingCard } from "@/components/cards/PlayingCard";
 import { type GameInfo, gameHref } from "@/games/registry";
 import styles from "./GameTile.module.css";
 
@@ -6,8 +8,15 @@ import styles from "./GameTile.module.css";
 export function GameTile({ game }: { game: GameInfo }) {
   return (
     <Link href={gameHref(game)} className={styles.tile}>
-      <span className={styles.emblem} aria-hidden="true">
-        {game.emblem}
+      <span className={styles.stage} aria-hidden="true">
+        {game.cards.map((card, i) => (
+          <PlayingCard
+            key={i}
+            card={card}
+            className={styles.stageCard}
+            style={{ "--d": i - (game.cards.length - 1) / 2 } as CSSProperties}
+          />
+        ))}
       </span>
       <span className={styles.name}>{game.title}</span>
       <span className={styles.tagline}>{game.tagline}</span>

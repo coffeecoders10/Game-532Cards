@@ -23,8 +23,7 @@
   border-radius: 999px;
   background: var(--panel);
   border: 1px solid var(--panel-line);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
   transition:
     box-shadow 0.3s var(--ease-out),
     border-color 0.3s var(--ease-out),
@@ -32,15 +31,15 @@
 }
 
 .seat[data-turn="true"] .plate {
-  border-color: var(--lamp);
+  border-color: var(--crema);
   animation: turnGlow 1.6s ease-in-out infinite;
 }
 
 .seat[data-winner="true"] .plate {
   border-color: var(--good);
   box-shadow:
-    0 0 0 3px rgba(127, 209, 155, 0.35),
-    0 0 28px rgba(127, 209, 155, 0.5);
+    0 0 0 3px rgba(143, 207, 158, 0.35),
+    0 0 28px rgba(143, 207, 158, 0.5);
 }
 
 .seat[data-away="true"] .plate,
@@ -56,13 +55,13 @@
   0%,
   100% {
     box-shadow:
-      0 0 0 0 rgba(255, 220, 148, 0.45),
+      0 0 0 0 rgba(226, 176, 114, 0.45),
       0 6px 18px rgba(0, 0, 0, 0.35);
   }
   50% {
     box-shadow:
-      0 0 0 7px rgba(255, 220, 148, 0),
-      0 0 24px rgba(255, 220, 148, 0.35);
+      0 0 0 7px rgba(226, 176, 114, 0),
+      0 0 24px rgba(226, 176, 114, 0.35);
   }
 }
 
@@ -74,11 +73,11 @@
   width: var(--avatar);
   height: var(--avatar);
   border-radius: 50%;
-  background: linear-gradient(150deg, #2d6b5e, #17443d);
-  border: 2px solid var(--brass-dim);
+  background: #251b16;
+  border: 1px solid rgba(226, 176, 114, 0.35);
   font-family: var(--font-head);
-  font-size: 22px;
-  color: var(--text);
+  font-size: 20px;
+  color: var(--crema);
 }
 
 .token {
@@ -90,9 +89,9 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #f6dca0, var(--brass) 55%, #a8803c);
-  border: 2px solid #5a4220;
-  color: #2b1d0a;
+  background: var(--crema);
+  border: 2px solid var(--panel);
+  color: var(--on-crema);
   font-family: var(--font-head);
   font-size: 15px;
   line-height: 1;
@@ -112,7 +111,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 15px;
   line-height: 1.1;
 }
@@ -131,23 +130,45 @@
 .tally {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
+/* Each hand won is a coffee bean: an oval with a crease down the middle. */
 .dot {
+  position: relative;
   width: 9px;
-  height: 9px;
+  height: 12px;
   border-radius: 50%;
-  border: 1.5px solid var(--brass-dim);
+  rotate: 24deg;
+  border: 1.5px solid var(--crema-dim);
   background: transparent;
   transition:
     background 0.3s var(--ease-out),
     transform 0.3s var(--ease-spring);
 }
 
+.dot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  bottom: 14%;
+  width: 1.5px;
+  translate: -50% 0;
+  border-radius: 1px;
+  background: var(--crema-dim);
+  opacity: 0.55;
+  transition: background 0.3s, opacity 0.3s;
+}
+
+.dot[data-filled="true"]::after {
+  background: var(--roast-lo);
+  opacity: 0.8;
+}
+
 .dot[data-filled="true"] {
-  background: var(--brass);
-  border-color: var(--brass);
+  background: var(--crema);
+  border-color: var(--crema);
   transform: scale(1.1);
 }
 
@@ -176,7 +197,7 @@
 @keyframes bump {
   from {
     transform: scale(1.7);
-    color: var(--lamp);
+    color: var(--crema);
   }
 }
 
@@ -187,7 +208,7 @@
   top: -14px;
   font-family: var(--font-head);
   font-size: 26px;
-  color: var(--lamp);
+  color: var(--crema);
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
   pointer-events: none;
   animation: floatUp 1.6s var(--ease-out) forwards;
