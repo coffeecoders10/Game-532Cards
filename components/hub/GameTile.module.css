@@ -3,38 +3,65 @@
   align-content: start;
   gap: 8px;
   padding: 22px 22px 18px;
-  border-radius: 24px;
+  border-radius: 16px;
   background: var(--panel);
   border: 1px solid var(--panel-line);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(10px);
   color: inherit;
   text-decoration: none;
   transition:
     translate 0.2s var(--ease-out),
     border-color 0.2s,
-    box-shadow 0.2s var(--ease-out);
+    background 0.2s;
 }
 
 a.tile:hover {
-  translate: 0 -4px;
-  border-color: var(--brass);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  translate: 0 -2px;
+  border-color: rgba(226, 176, 114, 0.5);
+  background: #1d1613;
 }
 
 a.tile:active {
   translate: 0 0;
 }
 
-.emblem {
+/* A held hand of the game's own cards, rising from the bottom edge of a recessed stage. */
+.stage {
+  --cw: 62px;
+  position: relative;
   display: flex;
-  margin-bottom: 10px;
+  justify-content: center;
+  align-items: flex-end;
+  height: 118px;
+  margin: -6px -6px 12px;
+  border-radius: 11px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 60% 90% at 50% 100%, rgba(226, 176, 114, 0.12), transparent 75%),
+    repeating-radial-gradient(circle at 50% 130%, transparent 0 14px, rgba(226, 176, 114, 0.05) 14px 15px),
+    #120c0a;
+  box-shadow: inset 0 0 0 1px rgba(240, 228, 210, 0.06);
+}
+
+.stageCard {
+  margin: 0 calc(var(--cw) * -0.18);
+  transform-origin: 50% 160%;
+  rotate: calc(var(--d) * 9deg);
+  translate: calc(var(--d) * 4px) calc(16px + var(--d) * var(--d) * 4px);
+  transition:
+    translate 0.4s var(--ease-out),
+    rotate 0.4s var(--ease-out);
+}
+
+a.tile:hover .stageCard {
+  rotate: calc(var(--d) * 13deg);
+  translate: calc(var(--d) * 14px) calc(6px + var(--d) * var(--d) * 5px);
 }
 
 .name {
   font-family: var(--font-head);
-  font-size: 28px;
+  font-size: 26px;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .tagline {
@@ -61,21 +88,28 @@ a.tile:active {
   border-radius: 999px;
   border: 1px solid var(--panel-line);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-dim);
 }
 
 .play {
-  font-weight: 800;
-  color: var(--lamp);
+  font-weight: 700;
+  color: var(--crema);
+}
+
+.play span {
+  display: inline-block;
+  transition: translate 0.2s var(--ease-out);
+}
+
+a.tile:hover .play span {
+  translate: 4px 0;
 }
 
 .soon {
   align-content: center;
   border-style: dashed;
   background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
   min-height: 180px;
 }
 

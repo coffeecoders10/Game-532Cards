@@ -6,7 +6,7 @@
   max-width: 100%;
 }
 
-/* Faint trump emblem printed on the felt */
+/* Faint trump emblem printed on the table */
 .mark {
   position: absolute;
   left: 50%;
@@ -14,7 +14,7 @@
   width: calc(var(--cw) * 2.3);
   height: calc(var(--cw) * 2.3);
   translate: -50% -50%;
-  color: var(--brass);
+  color: var(--crema);
   opacity: 0.09;
   animation: stamp 0.9s var(--ease-out) backwards;
   pointer-events: none;
@@ -114,8 +114,8 @@
   to {
     scale: 1.14;
     box-shadow:
-      0 0 0 calc(var(--u) * 1.6) var(--lamp),
-      0 0 calc(var(--u) * 9) calc(var(--u) * 3) rgba(255, 220, 148, 0.7),
+      0 0 0 calc(var(--u) * 1.6) var(--crema),
+      0 0 calc(var(--u) * 9) calc(var(--u) * 3) rgba(226, 176, 114, 0.7),
       0 calc(var(--u) * 3) calc(var(--u) * 5) rgba(0, 0, 0, 0.45);
   }
 }
@@ -134,8 +134,8 @@
   height: 7px;
   margin: -3px;
   border-radius: 50%;
-  background: var(--lamp);
-  box-shadow: 0 0 8px var(--lamp);
+  background: var(--crema);
+  box-shadow: 0 0 8px var(--crema);
   opacity: 0;
   animation: spark 0.9s var(--ease-out) calc(0.5s + var(--s)) forwards;
 }
@@ -158,8 +158,8 @@
   translate: -50% 0;
   padding: 6px 16px;
   border-radius: 999px;
-  background: var(--lamp);
-  color: #2b1d0a;
+  background: var(--crema);
+  color: var(--on-crema);
   font-family: var(--font-head);
   font-size: 17px;
   white-space: nowrap;

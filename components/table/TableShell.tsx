@@ -52,6 +52,11 @@ export function TableShell({ name, logo, meta, rulesTitle, rules, alert, notice,
         </h1>
         {meta && <div className={styles.meta}>{meta}</div>}
         <div className={styles.tools}>
+          {alert && (
+            <span className={styles.status} role="alert" title={alert} aria-label={alert}>
+              <span className={styles.statusDot} aria-hidden="true" />
+            </span>
+          )}
           <button type="button" className={styles.tool} onClick={() => rulesRef.current?.showModal()}>
             Rules
           </button>
@@ -68,11 +73,6 @@ export function TableShell({ name, logo, meta, rulesTitle, rules, alert, notice,
 
       {children}
 
-      {alert && (
-        <div className={styles.alert} role="alert">
-          {alert}
-        </div>
-      )}
       {notice && (
         <div className={styles.notice} role="status" key={notice.id}>
           {notice.message}

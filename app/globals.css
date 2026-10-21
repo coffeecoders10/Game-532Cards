@@ -1,30 +1,33 @@
 :root {
-  /* Table */
-  --felt-hi: #1b5a50;
-  --felt-mid: #124038;
-  --felt-lo: #081f1e;
-  --rail: #3a161c;
-  --rail-hi: #5f2a31;
-  --brass: #dcb064;
-  --brass-dim: #8f7240;
-  --lamp: #ffdc94;
+  /* Roast: the table and page, near-black espresso with a warm lift in the middle */
+  --roast-hi: #1c1512;
+  --roast-mid: #130e0c;
+  --roast-lo: #0b0807;
+  --surface: #181210;
+  --rail: #241b16;
+  --rail-hi: #35281f;
 
-  /* Cards */
-  --paper: #f8f2e3;
-  --paper-edge: #e1d5b6;
-  --ink: #1b2130;
-  --red: #c4372c;
+  /* Crema: the single accent, plus its quiet sibling */
+  --crema: #e2b072;
+  --crema-dim: #8d6e4b;
+  --on-crema: #1a0f06;
+
+  /* Cards: bone stock, warm ink */
+  --paper: #f2eadc;
+  --paper-edge: #ddd0b9;
+  --ink: #1b1512;
+  --red: #c8402f;
 
   /* Interface */
-  --text: #f4ecd8;
-  --text-dim: #aebcb2;
-  --panel: rgba(8, 28, 27, 0.78);
-  --panel-line: rgba(220, 176, 100, 0.28);
-  --good: #7fd19b;
-  --warn: #f0a15e;
+  --text: #f0e7da;
+  --text-dim: #a89a8a;
+  --panel: #171110;
+  --panel-line: rgba(240, 228, 210, 0.11);
+  --good: #8fcf9e;
+  --warn: #eba062;
 
   --font-body: var(--font-ui), system-ui, sans-serif;
-  --font-head: var(--font-display), Georgia, serif;
+  --font-head: var(--font-display), system-ui, sans-serif;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -46,10 +49,10 @@ body {
   height: 100%;
 }
 
-/* Thin, felt-coloured scrollbars that only show a faint brass thumb. */
+/* Thin scrollbars that only show a faint crema thumb. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(220, 176, 100, 0.28) transparent;
+  scrollbar-color: rgba(226, 176, 114, 0.22) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -64,17 +67,17 @@ body {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgba(220, 176, 100, 0.28);
+  background: rgba(226, 176, 114, 0.22);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(220, 176, 100, 0.5);
+  background: rgba(226, 176, 114, 0.45);
 }
 
 body {
   min-height: 100dvh;
   color: var(--text);
-  background: var(--felt-lo);
+  background: var(--roast-lo);
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.45;
@@ -98,14 +101,14 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--lamp);
+  outline: 2px solid var(--crema);
   outline-offset: 3px;
   border-radius: 6px;
 }
 
 ::selection {
-  background: var(--brass);
-  color: var(--ink);
+  background: var(--crema);
+  color: var(--on-crema);
 }
 
 @media (prefers-reduced-motion: reduce) {

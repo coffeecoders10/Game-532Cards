@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { Card } from "@/lib/cards/cards";
-import { PlayingCard } from "@/components/cards/PlayingCard";
+import { FlipCard } from "@/components/cards/FlipCard";
 import { BackLink } from "./BackLink";
 import { FeltPage } from "./FeltPage";
 import { Watermark } from "./Watermark";
@@ -34,7 +34,7 @@ export function GameLanding({ name, emblem, tagline, fan, children }: Props) {
         {fan && (
           <div className={styles.fan} aria-hidden="true">
             {fan.map((card, i) => (
-              <PlayingCard
+              <FlipCard
                 key={i}
                 card={card}
                 style={{ "--d": i - mid, "--k": i } as CSSProperties}

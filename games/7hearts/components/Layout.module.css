@@ -35,7 +35,7 @@
 }
 
 .col[data-red="true"] .tag svg {
-  color: #f08a7e;
+  color: #ee8a78;
 }
 
 .run {
@@ -62,7 +62,7 @@
   gap: 2px;
   width: var(--cw);
   height: calc(var(--cw) * 0.8);
-  border: 1.5px dashed rgba(220, 176, 100, 0.4);
+  border: 1.5px dashed rgba(226, 176, 114, 0.4);
   border-radius: calc(var(--cw) * 0.1);
   color: var(--text-dim);
   font-size: calc(var(--cw) * 0.36);
@@ -91,9 +91,9 @@
 }
 
 .next[data-hot="true"] {
-  border: 1.5px solid var(--lamp);
-  background: rgba(255, 220, 148, 0.14);
-  color: var(--lamp);
+  border: 1.5px solid var(--crema);
+  background: rgba(226, 176, 114, 0.14);
+  color: var(--crema);
   opacity: 1;
 }
 

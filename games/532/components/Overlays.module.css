@@ -1,13 +1,10 @@
 .panel {
   width: min(92vw, 420px);
   padding: 20px 22px 22px;
-  border-radius: 22px;
+  border-radius: 16px;
   background: var(--panel);
   border: 1px solid var(--panel-line);
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   text-align: center;
   animation: panelIn 0.5s var(--ease-out) backwards;
 }
@@ -141,7 +138,7 @@
   gap: 10px;
   padding: 8px 12px 8px 8px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(240, 228, 210, 0.05);
   text-align: left;
   animation: panelIn 0.5s var(--ease-out) calc(var(--i) * 110ms + 100ms) backwards;
 }
@@ -152,9 +149,9 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #f6dca0, var(--brass) 55%, #a8803c);
-  border: 2px solid #5a4220;
-  color: #2b1d0a;
+  background: var(--crema);
+  border: 0;
+  color: var(--on-crema);
   font-family: var(--font-head);
   font-size: 17px;
 }
@@ -187,17 +184,17 @@
 }
 
 .result[data-kind="made"] {
-  background: rgba(127, 209, 155, 0.2);
+  background: rgba(143, 207, 158, 0.2);
   color: var(--good);
 }
 
 .result[data-kind="over"] {
-  background: rgba(220, 176, 100, 0.22);
-  color: var(--lamp);
+  background: rgba(226, 176, 114, 0.22);
+  color: var(--crema);
 }
 
 .result[data-kind="short"] {
-  background: rgba(240, 161, 94, 0.2);
+  background: rgba(235, 160, 98, 0.2);
   color: var(--warn);
 }
 
@@ -207,7 +204,7 @@
 }
 
 .next strong {
-  color: var(--lamp);
+  color: var(--crema);
 }
 
 .trades {
@@ -223,12 +220,12 @@
   min-height: 48px;
   padding: 0 22px;
   border: 0;
-  border-radius: 14px;
-  background: var(--lamp);
-  color: #2b1d0a;
-  font-weight: 800;
+  border-radius: 12px;
+  background: var(--crema);
+  color: var(--on-crema);
+  font-weight: 700;
   font-size: 16px;
-  box-shadow: 0 4px 0 #b88a3a, 0 10px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: none;
   transition:
     translate 0.15s var(--ease-out),
     box-shadow 0.15s var(--ease-out),
@@ -240,8 +237,7 @@
 }
 
 .primary:active:not(:disabled) {
-  translate: 0 3px;
-  box-shadow: 0 1px 0 #b88a3a, 0 4px 10px rgba(0, 0, 0, 0.35);
+  translate: 0 1px;
 }
 
 .primary:disabled {
@@ -265,8 +261,9 @@
   font-family: var(--font-head);
   font-size: clamp(40px, 11vw, 72px);
   line-height: 1;
-  color: var(--lamp);
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+  letter-spacing: -0.03em;
+  color: var(--crema);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.7);
 }
 
 .introRole {

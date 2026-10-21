@@ -8,7 +8,7 @@
   margin-bottom: 12px;
   font-size: 15px;
   font-weight: 700;
-  color: var(--lamp);
+  color: var(--crema);
 }
 
 .rows {
@@ -32,8 +32,8 @@
 }
 
 .row[data-lead="true"] {
-  background: rgba(220, 176, 100, 0.18);
-  box-shadow: inset 0 0 0 1px var(--brass-dim);
+  background: rgba(226, 176, 114, 0.18);
+  box-shadow: inset 0 0 0 1px var(--crema-dim);
 }
 
 @keyframes rowIn {
@@ -49,9 +49,9 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #f6dca0, var(--brass) 55%, #a8803c);
-  border: 2px solid #5a4220;
-  color: #2b1d0a;
+  background: var(--crema);
+  border: 0;
+  color: var(--on-crema);
   font-family: var(--font-head);
   font-size: 16px;
 }
@@ -81,7 +81,7 @@
 .gain {
   padding: 2px 9px;
   border-radius: 999px;
-  background: rgba(240, 161, 94, 0.18);
+  background: rgba(235, 160, 98, 0.18);
   color: var(--warn);
   font-size: 12.5px;
   font-weight: 700;
@@ -89,7 +89,7 @@
 }
 
 .row[data-out="true"] .gain {
-  background: rgba(127, 209, 155, 0.2);
+  background: rgba(143, 207, 158, 0.2);
   color: var(--good);
 }
 

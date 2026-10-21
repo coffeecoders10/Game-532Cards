@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree, Young_Serif } from "next/font/google";
+import { Bricolage_Grotesque, Geist } from "next/font/google";
 import "./globals.css";
 
-const display = Young_Serif({
+// One weight on purpose: every display glyph (titles, card indices, tokens) renders at 600.
+const display = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: "400",
+  weight: "600",
 });
 
-const ui = Figtree({
+const ui = Geist({
   variable: "--font-ui",
   subsets: ["latin"],
 });
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b2624",
+  themeColor: "#0b0807",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
