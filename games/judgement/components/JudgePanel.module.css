@@ -1,0 +1,140 @@
+.panel {
+  display: grid;
+  gap: 6px;
+  width: min(92vw, 380px);
+  padding: 10px 16px 12px;
+  border-radius: 16px;
+  background: var(--panel);
+  border: 1px solid var(--crema-dim);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+  text-align: center;
+  animation: rise 0.5s var(--ease-spring) backwards;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+    scale: 0.96;
+  }
+}
+
+.prompt {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.picker {
+  display: grid;
+  grid-template-columns: 52px 1fr 52px;
+  align-items: center;
+  gap: 10px;
+}
+
+.step {
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.38);
+  transition:
+    translate 0.15s var(--ease-out),
+    opacity 0.2s;
+}
+
+.step:hover:not(:disabled) {
+  translate: 0 -2px;
+}
+
+.step:active:not(:disabled) {
+  translate: 0 2px;
+}
+
+.step:disabled {
+  opacity: 0.35;
+}
+
+.count {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 46px;
+  line-height: 1;
+  color: var(--crema);
+}
+
+.count b {
+  display: inline-block;
+  font-weight: 400;
+  animation: tick 0.35s var(--ease-spring);
+}
+
+@keyframes tick {
+  from {
+    scale: 0.7;
+    opacity: 0.4;
+  }
+}
+
+.blocked {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--warn);
+}
+
+.slider {
+  width: 100%;
+  height: 28px;
+  accent-color: var(--crema);
+  cursor: pointer;
+}
+
+.lock {
+  min-height: 46px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--crema);
+  color: var(--on-crema);
+  font-size: 16px;
+  font-weight: 700;
+  transition:
+    translate 0.15s var(--ease-out),
+    scale 0.15s var(--ease-out),
+    background 0.2s,
+    opacity 0.2s;
+}
+
+.lock:hover:not(:disabled) {
+  translate: 0 -2px;
+  background: #eec088;
+}
+
+.lock:active:not(:disabled) {
+  translate: 0 1px;
+  scale: 0.98;
+}
+
+.lock:disabled {
+  opacity: 0.5;
+}
+
+@media (max-height: 700px) {
+  .panel {
+    gap: 2px;
+    padding-block: 6px 8px;
+  }
+  .count {
+    font-size: 36px;
+  }
+  .step,
+  .lock {
+    min-height: 44px;
+  }
+  .slider {
+    height: 22px;
+  }
+}

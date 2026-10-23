@@ -1,6 +1,6 @@
 # CC Card Games
 
-A hub of playing-card games for the browser. Currently: **5-3-2**, a three-player trick-taking game, **7-8**, a two-player one, and **7 of Hearts**, for three to five. The shared look and feel, and how to add a game, are in [DESIGN.md](DESIGN.md).
+A hub of playing-card games for the browser. Currently: **5-3-2**, a three-player trick-taking game, **7-8**, a two-player one, **7 of Hearts**, for three to five, and **Judgement**, for three to six. The shared look and feel, and how to add a game, are in [DESIGN.md](DESIGN.md).
 
 Built with Next.js (App Router), plain CSS Modules, and the shared Socket.IO room service described in [docs/sop-socket.md](docs/sop-socket.md).
 
@@ -38,6 +38,15 @@ Full 52-card deck dealt out evenly to 3–5 players, over seven rounds.
 3. First to empty their hand goes out. Everyone else scores the value of their remaining cards (Ace 1 to King 13).
 4. Lowest total after round seven wins. The host can deal once three players are seated; the table then locks to those players.
 
+## How Judgement plays
+
+Three to six players, as many rounds as you like. The deck is trimmed so everyone gets the same number of cards: all 2s out for 3 and 6 players, the 2 of clubs and 2 of diamonds out for 5, nothing out for 4 (16, 13, 10 and 8 cards each).
+
+1. A random trump suit is drawn every round. Starting with that round's starter, each player **calls** how many hands they will win, from 0 to the cards in their hand. Calls are public and final. The last player to call can't pick the number that makes the calls add up to the hands available, so somebody always misses.
+2. The starter leads the first hand and play goes clockwise. Follow the led suit if you can; otherwise play anything. Highest trump wins, else highest card of the led suit. The winner leads next.
+3. Win exactly your call and you score that number; win more or fewer and you score nothing (a call of 0 is worth 0).
+4. The starting seat moves one place clockwise each round. After any round the host can end the game; the highest total wins and a tie is shared.
+
 ## Code layout
 
 | Path | What it is |
@@ -46,14 +55,14 @@ Full 52-card deck dealt out evenly to 3–5 players, over seven rounds.
 | `games/registry.tsx` | The list of games shown on the hub. Add an entry to add a tile. |
 | `games/532/game/` | Pure 5-3-2 rules (`engine.ts`), deck (`deck.ts`), and the per-player view projection (`view.ts`). No React, no networking. |
 | `games/532/net/`, `games/78/net/` | Each game's actions (`protocol.ts`) and its adapter (`table.ts`) that plugs its rules into the shared sessions. |
-| `games/78/`, `games/7hearts/` | 7-8 and 7 of Hearts: same layout as 5-3-2 (`game/` rules and view, `net/`, `components/`). |
+| `games/78/`, `games/7hearts/`, `games/judgement/` | 7-8, 7 of Hearts and Judgement: same layout as 5-3-2 (`game/` rules and view, `net/`, `components/`). |
 | `lib/net/` | Shared multiplayer: `host.ts` and `guest.ts` sessions, `crypto.ts`, `room.ts` (Socket.IO transport), `wire.ts`, `storage.ts` and the `useTable` hook. |
 | `components/table/` | Shared table pieces: `TableShell`, `Seat`, `Lobby`, `TrumpPicker`, `GameHome`, `RoomClient`, `NameGate`. |
 | `games/532/components/` | The 5-3-2 table UI: `Table`, `Hand`, `Seat`, `TrickArea`, `Overlays`, `Lobby`, the landing page and rules. |
 | `components/ui/` | Shared building blocks every game uses: `GameLanding`, `Panel`, `Button`, `TextField`, `RulesDialog`, `StatusScreen`... |
 | `components/cards/` | `PlayingCard` and suit icons, shared by all games. |
 | `components/hub/` | The hub landing page and game tiles. |
-| `lib/cards/`, `lib/hooks/` | Game-agnostic card types and helpers, and shared React hooks. |
+| `lib/cards/`, `lib/hooks/` | Game-agnostic card types and helpers (including `tricks.ts`: follow-suit and trick-winner rules shared by 5-3-2 and Judgement), and shared React hooks. |
 
 ## Multiplayer design
 

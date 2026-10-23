@@ -1,0 +1,219 @@
+/* ---------------------------------------------------------------- board */
+
+/* Players sit round the felt: opponents on an ellipse, you at the bottom with your hand. */
+.board {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  margin: 0 8px;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.opp {
+  position: absolute;
+  left: calc(50% + var(--x) * 38%);
+  top: calc(50% + var(--y) * 36%);
+  translate: -50% -50%;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.center > * {
+  pointer-events: auto;
+}
+
+/* Trump, the size of the round and the led suit stay in the corner where they can always be found. */
+.corner {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  z-index: 4;
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+.hands,
+.led {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.led svg {
+  width: 12px;
+  height: 12px;
+}
+
+.led {
+  animation: ledIn 0.4s var(--ease-spring) backwards;
+}
+
+@keyframes ledIn {
+  from {
+    scale: 0.6;
+    opacity: 0;
+  }
+}
+
+.scores {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 4;
+  display: grid;
+  justify-items: end;
+  min-height: 44px;
+  padding: 4px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--panel-line);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.scores small {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--crema);
+}
+
+.scores:hover {
+  border-color: var(--crema-dim);
+}
+
+/* The call-your-hands moment: trump front and centre while the table judges. */
+.calls {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+  animation: callsIn 0.7s var(--ease-spring) 0.2s backwards;
+}
+
+@keyframes callsIn {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+    scale: 0.9;
+  }
+}
+
+.callsSuit {
+  width: clamp(48px, 13vw, 72px);
+  height: clamp(48px, 13vw, 72px);
+  color: var(--crema);
+  opacity: 0.45;
+}
+
+.callsRed {
+  color: #e0705f;
+}
+
+.callsTitle {
+  font-family: var(--font-head);
+  font-size: 18px;
+}
+
+.callsSub {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The round summary and the final result sit over the whole board. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  padding: 8px 0;
+  background: rgba(8, 5, 4, 0.72);
+  border-radius: 16px;
+  animation: dimIn 0.4s var(--ease-out) backwards;
+}
+
+@keyframes dimIn {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ----------------------------------------------------------------- mine */
+
+.mine {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+}
+
+.line {
+  position: relative;
+  z-index: 2;
+  min-height: 28px;
+  padding: 3px 16px;
+  border-radius: 999px;
+  font-size: 14.5px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-dim);
+  transition:
+    color 0.3s,
+    background 0.3s;
+}
+
+.line[data-active="true"] {
+  color: var(--on-crema);
+  background: var(--crema);
+  animation: nudge 0.6s var(--ease-spring);
+}
+
+@keyframes nudge {
+  from {
+    scale: 0.85;
+  }
+}
+
+.me {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.emptyHand {
+  min-height: 24px;
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  .opp {
+    top: calc(50% + var(--y) * 32%);
+  }
+}

@@ -7,6 +7,7 @@ import {
   shuffle,
 } from "@/lib/cards/cards";
 import { fail } from "@/lib/cards/rules";
+import { type TrickPlay, followCards, trickWinnerSeat } from "@/lib/cards/tricks";
 import { buildDeck } from "./deck";
 
 /**
@@ -28,10 +29,7 @@ export interface ExchangeRight {
   giver: number;
 }
 
-export interface TrickPlay {
-  seat: number;
-  card: Card;
-}
+export type { TrickPlay };
 
 export interface RoundSummary {
   wins: number[];
@@ -84,29 +82,10 @@ const nextSeat = (seat: number) => (seat + 1) % SEATS;
 // ---------------------------------------------------------------- card rules
 
 /** Cards a player may legally play: they must follow the led suit when they can. */
-export function legalCards(hand: readonly Card[], trick: readonly TrickPlay[]): Card[] {
-  if (trick.length === 0) return hand.slice();
-  const led = trick[0].card.suit;
-  const following = hand.filter((c) => c.suit === led);
-  return following.length > 0 ? following : hand.slice();
-}
+export const legalCards = followCards;
 
 /** Seat of the winning play: highest trump if any trump was played, else highest of the led suit. */
-export function trickWinnerSeat(trick: readonly TrickPlay[], trump: Suit): number {
-  const led = trick[0].card.suit;
-  const beats = (a: Card, b: Card) => {
-    const aTrump = a.suit === trump;
-    const bTrump = b.suit === trump;
-    if (aTrump !== bTrump) return aTrump;
-    if (a.suit !== b.suit) return a.suit === led;
-    return a.rank > b.rank;
-  };
-  let best = trick[0];
-  for (const play of trick.slice(1)) {
-    if (beats(play.card, best.card)) best = play;
-  }
-  return best.seat;
-}
+export { trickWinnerSeat };
 
 /**
  * Who owes whom after a round. A player who won more than their target takes cards
